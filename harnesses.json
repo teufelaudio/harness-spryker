@@ -1,0 +1,9 @@
+{
+  "teufelaudio/spryker": {
+    "v1.5.1": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.5.1.tar.gz",
+      "date": "2023-05-30"
+    }
+  }
+}

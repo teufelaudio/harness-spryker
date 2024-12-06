@@ -1,11 +1,16 @@
   elasticsearch:
-    image: {{ @('services.elasticsearch.image') }}
+{% if @('app.build') == 'dynamic' %}
+    build:
+      context: ./
+      dockerfile: .my127ws/docker/image/elasticsearch/Dockerfile
+{% else %}
+    image: {{ @('elasticsearch.image') ~':' ~ @('elasticsearch.tag') }}
+{% endif %}
     labels:
-      # deprecated, a later workspace release will disable by default
       - traefik.enable=false
     environment:
-      ES_JAVA_OPTS: -Xms512m -Xmx512m
-      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xmx512m -Xms512m"
+      discovery.type: "single-node"
     networks:
       - private
 {% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}

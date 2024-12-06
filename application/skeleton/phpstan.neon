@@ -1,23 +1,86 @@
 includes:
-    - phpstan-baseline.neon
-    - vendor/spryker-sdk/phpstan-spryker/extension.neon
+    - %currentWorkingDirectory%/phpstan-baseline.neon
+    - %currentWorkingDirectory%/vendor/jangregor/phpstan-prophecy/extension.neon
 
 parameters:
+    level: 6
+    paths:
+        - %currentWorkingDirectory%/src/Teufel
+        - %currentWorkingDirectory%/config/Shared
+    fileExtensions:
+        - php
+    parallel:
+        processTimeout: 1000.0
+        jobSize: 250
+        maximumNumberOfProcesses: 100
+        minimumNumberOfJobsPerProcess: 2
+    phpVersion: 80100 # PHP 8.1
     excludePaths:
-        analyse:
-            - %rootDir%/../../../src/Generated/*
-            - %rootDir%/../../../src/Orm/*
-            - %rootDir%/../../../src/Pyz/Zed/DataImport/Business/*
+        - %currentWorkingDirectory%/src/Teufel/Shared/ErpDataExport/Models/*
+        - %currentWorkingDirectory%/src/Teufel/Zed/DataExport/Business/CmsBlockXml/CmsBlockXmlExporter.php
+        - %currentWorkingDirectory%/src/Teufel/*/*Repository.php
+        - %currentWorkingDirectory%/src/Teufel/*/*QueryContainer.php
+        - %currentWorkingDirectory%/src/Generated/*
+        - %currentWorkingDirectory%/src/Orm/*
+        - %currentWorkingDirectory%/src/Pyz/*
+        - %currentWorkingDirectory%/src/Teufel/Client/Catalog/Plugin/Elasticsearch/Query/ProductCatalogSearchQueryPlugin.php
 
     bootstrapFiles:
-        - %rootDir%/../../../phpstan-bootstrap.php
+        - %currentWorkingDirectory%/phpstan-bootstrap.php
 
     ignoreErrors:
+        - '#Call to an undefined method Propel\\Runtime\\Collection\\Collection::delete\(\)#'
         - '#Call to an undefined method .+Criteria::.+\(\).#'
+        - '#Parameter .* of class .* expects .*, PHPUnit\\Framework\\MockObject\\MockObject given.*#'
+        - '#Method .* should return .* but returns PHPUnit\\Framework\\MockObject\\MockObject.*#'
+        - '#Property Pyz\\Tests\\Integration\\.* does not accept Spryker\\Zed\\Kernel\\Business\\AbstractFacade.#'
+        - '#Call to an undefined method Generated\\Zed\\Ide\\AutoCompletion|Spryker\\Shared\\Kernel\\LocatorLocatorInterface::.*#'
+        - '#Function oci_.+ not found.#'
+        - '#Constant OCI_.+ not found.#'
+        - '#Declaration of Teufel\\Zed\\.*::.* should be compatible with Spryker\\Zed\\.*\Base\.*#'
+        - '#Method Teufel\\.*::.* should return array<.*> but returns array<int,.*>#'
+        - '#Method Teufel\\.*Factory::.*Client\(\) should return .*Interface but returns mixed#'
+        - '#Method Teufel\\.*Factory::get.* should return .*Interface but returns mixed#'
+        - '#Method Teufel\\.*Factory::get.* should return .*> but returns mixed#'
+        - '#Method Teufel\\.*Config::get.* should return .* but returns mixed#'
+        - '#Parameter .* Teufel\\.* constructor expects array.*, mixed given.#'
+        - '#Parameter .* \$callback of function .* expects callable\(mixed\): mixed, Closure.* given.#'
+        - '#Parameter .* \$separator of function explode expects non-empty-string, string given.#'
+        - '#Cannot cast mixed to *#'
+        - '#PHPDoc tag.* with type array.* is not subtype of native type ArrayObject#'
+        - '#ArrayObject.* does not accept array.#'
+        - '#ArrayObject.* does not accept .*Transfer.#'
+        - '#Method Teufel.*QueryPlugin\(\) should return .*QueryInterface but returns Teufel.*QueryPlugin.#'
+        - '#Method .*getTwigEnvironment\(\) should return Twig\\Environment but returns mixed.#'
+        - '#Method Teufel\\.*Factory::getStore\(\) should return Spryker\\Shared\\Kernel\\Store but returns mixed.#'
+
+        #see ADR 0017_salutation_type
+        -
+            message: "#^Method Teufel\\\\Zed\\\\Customer\\\\Communication\\\\CustomerCommunicationFactory\\:\\:createCustomerFormDataProvider\\(\\) should return Spryker\\\\Zed\\\\Customer\\\\Communication\\\\Form\\\\DataProvider\\\\CustomerFormDataProvider but returns Teufel\\\\Zed\\\\Customer\\\\Communication\\\\Form\\\\DataProvider\\\\CustomerFormDataProvider\\.$#"
+            count: 1
+            path: src/Teufel/Zed/Customer/Communication/CustomerCommunicationFactory.php
+        -
+            message: "#^Method Teufel\\\\Zed\\\\Customer\\\\Communication\\\\CustomerCommunicationFactory\\:\\:createCustomerUpdateFormDataProvider\\(\\) should return Spryker\\\\Zed\\\\Customer\\\\Communication\\\\Form\\\\DataProvider\\\\CustomerUpdateFormDataProvider but returns Teufel\\\\Zed\\\\Customer\\\\Communication\\\\Form\\\\DataProvider\\\\CustomerUpdateFormDataProvider\\.$#"
+            count: 1
+            path: src/Teufel/Zed/Customer/Communication/CustomerCommunicationFactory.php
+        -
+            message: "#^Method Teufel\\\\Service\\\\UtilDateTime\\\\UtilDateTimeService\\:\\:formatDateByLocale\\(\\) has parameter \\$date with no type specified#"
+            count: 1
+            path: src/Teufel/Service/UtilDateTime/UtilDateTimeService.php
+        -
+            message: "#^Method Teufel\\\\Service\\\\Emarsys\\\\Client\\\\FakeEmarsysClient\\:\\:addToStack\\(\\) has parameter \\$item with no type specified#"
+            count: 1
+            path: src/Teufel/Service/Emarsys/Client/FakeEmarsysClient.php
+        -
+            message: '#Variable \$config might not be defined.#'
+            path: %currentWorkingDirectory%/config/Shared/config_propel.php
 
     reportUnmatchedIgnoredErrors: false
+    checkMissingIterableValueType: false
+    checkGenericClassInNonGenericObjectType: false
 
     dynamicConstantNames:
         - APPLICATION
         - APPLICATION_ENV
         - APPLICATION_STORE
+        - APPLICATION_CODE_BUCKET

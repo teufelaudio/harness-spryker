@@ -6,28 +6,16 @@ function task_welcome()
     echo "Welcome!"
     echo "--------"
     {% for store, host in @('yves.external_hosts') %}
-      {% if host is not empty %}
-        echo "Yves {{ store }}: https://${YVES_HOST_{{ store }}}"
-      {% endif %}
+    echo "Yves {{ store }}: https://${YVES_HOST_{{ store }}}"
     {% endfor %}
-    {% for store, host in @('zed.external_hosts') %}
-      {% if host is not empty %}
-        echo "Zed {{ store }}: https://${ZED_HOST_{{ store }}}"
-      {% endif %}
-    {% endfor %}
+    echo "Zed: https://${ZED_HOST_GLOBAL}"
     echo "  Username: admin@spryker.com"
-    if [[ "$APP_BUILD" == "dynamic" ]]; then
-      echo "  Password: change123"
-    fi
+    echo "  Password: change123"
     {% for store, host in @('zed_api.external_hosts') %}
-      {% if host is not empty %}
-        echo "Zed API {{ store }}: https://${ZED_API_HOST_{{ store }}}"
-      {% endif %}
+    echo "Zed API {{ store }}: https://${ZED_API_HOST_{{ store }}}"
     {% endfor %}
     {% for store, host in @('glue.external_hosts') %}
-      {% if host is not empty %}
-        echo "Glue API {{ store }}: https://${GLUE_HOST_{{ store }}}"
-      {% endif %}
+    echo "Glue API {{ store }}: https://${GLUE_HOST_{{ store }}}"
     {% endfor %}
     {% if @('services.jenkins.enabled') -%}
     echo ""
@@ -37,9 +25,7 @@ function task_welcome()
     echo ""
     echo "RabbitMQ: https://{{ @('rabbitmq.external_host') }}"
     echo "  Username: {{ @('rabbitmq.user') }}"
-    if [[ "$APP_BUILD" == "dynamic" ]]; then
-      echo "  Password: {{ @('rabbitmq.password') }}"
-    fi
+    echo "  Password: {{ @('rabbitmq.password') }}"
     {% endif -%}
     {% if @('services.solr.enabled') -%}
     echo ""

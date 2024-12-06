@@ -1,0 +1,16 @@
+attributes:
+  services:
+    buggregator:
+      enabled: false
+      image: ghcr.io/buggregator/server:latest
+      api_port: 8000
+      var_dump_port: 9912
+      external_host: = 'buggregator-' ~ @('hostname')
+      host: buggregator
+    php-base:
+      environment:
+        SERVICE_BUGGREGATOR_ENABLED: = @('services.buggregator.enabled')
+        BUGGREGATOR_PROFILER_ENDPOINT: = @('services.buggregator.host') ~ ':' ~ @('services.buggregator.api_port')
+        BUGGREGATOR_VAR_DUMP_ENDPOINT: = @('services.buggregator.host') ~ ':' ~ @('services.buggregator.var_dump_port')
+        VAR_DUMPER_SERVER: "= @('services.buggregator.enabled') ? @('services.buggregator.host') ~ ':' ~ @('services.buggregator.var_dump_port') : ''"
+        VAR_DUMPER_FORMAT: "= @('services.buggregator.enabled') ? 'server' : ''"

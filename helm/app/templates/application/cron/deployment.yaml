@@ -1,4 +1,4 @@
-{{- with (include "service.resolved" (dict "root" $ "service_name" "cron") | fromYaml) -}}
+{{- with mergeOverwrite (dict) (index .Values.services "php-base") (index .Values.services "cron") -}}
 {{- if .enabled -}}
 apiVersion: apps/v1
 kind: Deployment
@@ -10,11 +10,14 @@ metadata:
     app.service: {{ $.Values.resourcePrefix }}cron
   annotations:
     argocd.argoproj.io/sync-wave: "15"
+    helm.sh/hook: "post-install,pre-upgrade"
+    helm.sh/hook-delete-policy: "before-hook-creation"
+    helm.sh/hook-weight: "1"
 spec:
-  {{- with (pick . "replicas") }}
-  {{- . | toYaml | nindent 2 }}
-  {{- end }}
+  replicas: 1
   revisionHistoryLimit: 2
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.service: {{ $.Values.resourcePrefix }}cron
@@ -25,16 +28,13 @@ spec:
         app.kubernetes.io/component: cron
         app.service: {{ $.Values.resourcePrefix }}cron
     spec:
-      affinity: {{- include "pod.affinity" (dict "root" $ "serviceName" "cron" "service" .) | nindent 8 }}
       {{- if not (eq "" (include "application.volumes.wwwDataPaths" $)) }}
       initContainers:
       - name: cron-volume-permissions
-        image: {{ .initContainers.volumePermissions.image }}
+        image: busybox
         command:
         - "/bin/chown"
-        {{- if .initContainers.volumePermissions.recursive }}
         - "-R"
-        {{- end }}
         - "www-data"
         {{- include "application.volumes.wwwDataPaths" $ | indent 8 }}
         volumeMounts:
@@ -67,9 +67,6 @@ spec:
           limits:
             memory: {{ .resources.memory }}
           requests:
-            {{- with ((.resources.cpu | default (dict)).request | default nil) }}
-            cpu: {{ . }}
-            {{- end }}
             memory: {{ .resources.memory }}
         volumeMounts:
         {{- if not (and (eq "" (include "application.volumeMounts.backend" $)) (eq "" (include "application.volumeMounts.all" $)) ) }}
@@ -89,7 +86,6 @@ spec:
       {{- include "application.volumes.all" $ | indent 6 }}
       {{- else }} []
       {{- end }}
-      topologySpreadConstraints: {{- (include "pod.topologySpreadConstraints" (dict "root" $ "serviceName" "cron" "service" .)) | nindent 8 }}
 status: {}
 {{- end }}
 {{- end }}

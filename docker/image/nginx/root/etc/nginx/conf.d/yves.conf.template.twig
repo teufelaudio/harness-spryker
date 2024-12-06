@@ -57,6 +57,7 @@ server {
         include /etc/nginx/fastcgi_params;
         fastcgi_param SCRIPT_NAME /index.php;
         fastcgi_param SCRIPT_FILENAME  $document_root/index.php;
+        fastcgi_buffering off; {# Teufel override: Attempt to avoid 502/504 errors #}
 
         # Spryker variables
         fastcgi_param APPLICATION_STORE {{ store_code }};

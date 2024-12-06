@@ -6,7 +6,8 @@ function task_init()
 
     if ! db_hasSchema; then
 
-        task assets:apply
+        # at Teufel we don't restore db dump, but rather reinstall the Spryker if db is empty
+        task install
 
         {% for step in @('backend.init.steps') -%}
         {{ step|raw }}

@@ -1,8 +1,8 @@
 {% if @('app.build') == 'static' %}
-FROM {{ @('docker.repository') ~ ':' ~ @('app.version') }}-console as console
+FROM {{ @('docker.repository') ~ '/console:' ~ @('app.version') }} as console
 {% endif %}
 
-FROM nginx:1.23-alpine
+FROM {{ @('services.nginx.base_image') }}
 COPY root /
 
 {% if @('app.build') == 'static' %}

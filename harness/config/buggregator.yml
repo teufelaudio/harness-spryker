@@ -1,0 +1,14 @@
+command('feature buggregator (on|off)'):
+  env:
+    COMPOSE_BIN: = @('docker.compose.bin')
+    ATTR_KEY: 'services.buggregator.enabled'
+    ATTR_VAL: '= input.command(3) == "on"? "true":"false"'
+  exec: |
+    #!bash(workspace:/)|=
+    ws set $ATTR_KEY $ATTR_VAL
+    echo 'Updating templates in .my127ws/'
+    run ws install --step=prepare
+    echo 'Bringing up php services with the new setting'
+    ws app build
+    passthru $COMPOSE_BIN up -d --remove-orphans
+    echo 'Done'

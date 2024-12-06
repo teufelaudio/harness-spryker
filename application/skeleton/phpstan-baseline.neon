@@ -1,11 +1,97 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$array of function array_filter expects array, string given\\.$#"
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
-			path: src/Pyz/Yves/ProductSetWidget/Widget/ProductSetIdsWidget.php
+			path: src/Pyz/Zed/DataImport/Business/Model/NavigationNode/NavigationNodeWriterStep.php
 
 		-
-			message: "#^Parameter \\#2 \\$default of method Symfony\\\\Component\\\\HttpFoundation\\\\InputBag\\:\\:get\\(\\) expects bool\\|float\\|int\\|string\\|null, array given\\.$#"
+			message: "#^Method Pyz\\\\Zed\\\\ExampleStateMachine\\\\ExampleStateMachineDependencyProvider\\:\\:provideBusinessLayerDependencies\\(\\) should return Spryker\\\\Zed\\\\Kernel\\\\Container but return statement is missing\\.$#"
 			count: 1
-			path: src/Pyz/Yves/ProductSetWidget/Widget/ProductSetIdsWidget.php
+			path: src/Pyz/Zed/ExampleStateMachine/ExampleStateMachineDependencyProvider.php
+
+		-
+			message: "#^Method Pyz\\\\Zed\\\\ExampleStateMachine\\\\ExampleStateMachineDependencyProvider\\:\\:provideCommunicationLayerDependencies\\(\\) should return Spryker\\\\Zed\\\\Kernel\\\\Container but return statement is missing\\.$#"
+			count: 1
+			path: src/Pyz/Zed/ExampleStateMachine/ExampleStateMachineDependencyProvider.php
+
+		-
+			message: "#^Method Teufel\\\\Client\\\\ProductAssetStorage\\\\Expander\\\\AssetExpander\\\\BundleProductAssetGalleryExpander\\:\\:findContentImageFromAssetsByIdContent\\(\\) should return Generated\\\\Shared\\\\Transfer\\\\ProductAssetViewTransfer but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Client/ProductAssetStorage/Expander/AssetExpander/BundleProductAssetGalleryExpander.php
+
+		-
+			message: "#^Method Teufel\\\\Client\\\\ProductAssetStorage\\\\Expander\\\\AssetExpander\\\\SimpleProductAssetGalleryExpander\\:\\:findContentImageFromAssetsByIdContent\\(\\) should return Generated\\\\Shared\\\\Transfer\\\\ProductAssetViewTransfer but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Client/ProductAssetStorage/Expander/AssetExpander/SimpleProductAssetGalleryExpander.php
+
+		-
+			message: "#^Anonymous function never returns null so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: src/Teufel/Yves/ContentImage/Twig/ContentImageTwigFunction.php
+
+		-
+			message: "#^Anonymous function never returns null so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: src/Teufel/Yves/ContentPdf/Twig/ContentPdfTwigFunction.php
+
+		-
+			message: "#^Anonymous function never returns null so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: src/Teufel/Yves/ContentVideo/Twig/ContentVideoTwigFunction.php
+
+		-
+			message: "#^Variable \\$bundledProductView in PHPDoc tag @var does not match any variable in the foreach loop\\: \\$magazineReviewView$#"
+			count: 1
+			path: src/Teufel/Yves/MagazineReview/Plugin/MagazineReviewRendererPlugin.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$pyzSlotContentBlock contains unknown class Orm\\\\Zed\\\\CmsBlock\\\\Persistence\\\\PyzSlotContentBlock\\.$#"
+			count: 1
+			path: src/Teufel/Zed/Cms/Business/Version/Mapper/VersionDataMapper.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\ContentManagementStorage\\\\ContentManagementStorageDependencyProvider\\:\\:provideBusinessLayerDependencies\\(\\) should return Spryker\\\\Zed\\\\Kernel\\\\Container but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/ContentManagementStorage/ContentManagementStorageDependencyProvider.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Teufel/Zed/ErpDataExport/Business/Exporter/XmlExporter.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\Newsletter\\\\Communication\\\\Console\\\\RegisterConsole\\:\\:execute\\(\\) should return int but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/Newsletter/Communication/Console/RegisterConsole.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\PayInStore\\\\Communication\\\\Plugin\\\\Oms\\\\Command\\\\ExportCommand\\:\\:run\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/PayInStore/Communication/Plugin/Oms/Command/ExportCommand.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\PayInStore\\\\Communication\\\\Plugin\\\\Oms\\\\Command\\\\PrepareForCashRegisterCommand\\:\\:run\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/PayInStore/Communication/Plugin/Oms/Command/PrepareForCashRegisterCommand.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\ProcessBuilder\\\\Plugin\\\\ProcessConfigurationPlugin\\:\\:getProcessName\\(\\) should return string but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/ProcessBuilder/Plugin/ProcessConfigurationPlugin.php
+
+		-
+			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			count: 1
+			path: src/Teufel/Zed/ProcessBuilder/Plugin/ProcessConfigurationPlugin.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\SaferpayPayment\\\\Communication\\\\Plugin\\\\Oms\\\\Commands\\\\AssertPaymentCommand\\:\\:run\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/SaferpayPayment/Communication/Plugin/Oms/Commands/AssertPaymentCommand.php
+
+		-
+			message: "#^Method Teufel\\\\Zed\\\\SaferpayPayment\\\\Communication\\\\Plugin\\\\Oms\\\\Commands\\\\CapturePaymentCommand\\:\\:run\\(\\) should return array but return statement is missing\\.$#"
+			count: 1
+			path: src/Teufel/Zed/SaferpayPayment/Communication/Plugin/Oms/Commands/CapturePaymentCommand.php
+

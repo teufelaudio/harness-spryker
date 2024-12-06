@@ -15,6 +15,9 @@ spec:
   {{- . | toYaml | nindent 2 }}
   {{- end }}
   revisionHistoryLimit: 2
+  # Extended to set the deployment strategy to "Recreate"
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app.service: {{ .Values.resourcePrefix }}webapp

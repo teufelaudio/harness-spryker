@@ -27,7 +27,8 @@ command('app deploy <environment>'):
     passthru helm --debug dependency build
     passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" "${NAMESPACE}" ./
     if [[ "$ENVIRONMENT" != "qa" ]]; then
-      ../../../tools/scripts/run_feature_env.sh "${PWD}/kubectl.config.yaml" "$NAMESPACE"
+      export KUBECONFIG="${PWD}/kubectl.config.yaml"
+      (cd ../../../ && tools/scripts/run_feature_env.sh "$NAMESPACE")
     fi
 
 command('app stop <environment>'):

@@ -1,0 +1,10 @@
+  buggregator:
+    image: {{ @('services.buggregator.image') }}
+    networks:
+      - private
+      - shared
+    labels:
+      - traefik.backend={{ @('services.buggregator.host') }}-{{ @('workspace.name') }}
+      - traefik.frontend.rule=Host:{{ @('services.buggregator.external_host') }}
+      - traefik.docker.network=my127ws
+      - traefik.port={{ @('services.buggregator.api_port') }}

@@ -17,6 +17,8 @@ confd('harness:/'):
   - { src: docker/image/console/root/usr/local/etc/php/conf.d/docker-php-ext-blackfire.ini }
   - { src: docker/image/console/root/usr/local/etc/php/conf.d/docker-php-ext-tideways.ini }
   - { src: docker/image/console/root/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini }
+  - { src: docker/image/console/root/usr/local/etc/php/conf.d/docker-php-ext-buggregator.ini }
+  - { src: docker/image/elasticsearch/Dockerfile }
   - { src: docker/image/lighthouse/Dockerfile }
   - { src: docker/image/lighthouse/root/app/run.sh }
   - { src: docker/image/nginx/Dockerfile }
@@ -32,8 +34,8 @@ confd('harness:/'):
   - { src: docker/image/php-fpm/root/usr/local/etc/php/conf.d/docker-php-ext-blackfire.ini }
   - { src: docker/image/php-fpm/root/usr/local/etc/php/conf.d/docker-php-ext-tideways.ini }
   - { src: docker/image/php-fpm/root/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini }
+  - { src: docker/image/php-fpm/root/usr/local/etc/php/conf.d/docker-php-ext-buggregator.ini }
   - { src: docker/image/php-fpm/root/usr/local/etc/php-fpm.d/pool.conf.template }
-  - { src: docker/image/solr/Dockerfile }
   - { src: docker/image/tls-offload/root/etc/nginx/conf.d/0-nginx.conf }
   - { src: docker/image/tls-offload/root/etc/nginx/conf.d/default.conf }
   - { src: docker/image/tls-offload/root/etc/ssl/certs/app.crt }
@@ -43,7 +45,6 @@ confd('harness:/'):
   - { src: docker/image/cron/root/crontab }
   - { src: docker/image/cron/root/entrypoint.sh }
   - { src: docker/image/cron/root/usr/local/etc/php/php.ini }
-  - { src: application/overlay/Jenkinsfile }
   - { src: application/overlay/auth.json }
   - { src: application/overlay/.dockerignore, dst: workspace:/.dockerignore }
   - { src: application/skeleton/README.md }
@@ -69,5 +70,10 @@ confd('harness:/'):
   - { src: docker/image/nginx/root/etc/nginx/conf.d/zed.conf.template }
   - { src: docker/image/jenkins-runner/Dockerfile }
   - { src: docker/image/jenkins-runner/root/usr/local/etc/php/php.ini }
+  - { src: docker/image/relay/Dockerfile }
   - { src: helm/preview/requirements.yaml }
   - { src: helm/preview/values.yaml }
+
+# used for Metaways configurations only
+confd('harness:/metaways'):
+  - { src: .env }

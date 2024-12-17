@@ -4,18 +4,10 @@ STOPSIGNAL SIGTERM
 
 COPY .my127ws/docker/image/console/root /
 RUN chown -R build:build /home/build /app \
- # installing tools in the image is deprecated
- && ([ -e /sbin/tini ] || curl --fail --silent --show-error --location --output /sbin/tini "https://github.com/krallin/tini/releases/download/v0.19.0/tini-$(dpkg --print-architecture)") \
- && chmod +x /sbin/tini \
- && mkdir -p /tmp/php-file-cache \
- && chown -R build:build /tmp/php-file-cache
-{%- if @('php.composer.major_version') != '1' %} \
- && composer self-update --{{ @('php.composer.major_version') }} \
- && rm -f /root/.composer/*.phar
-{%- endif %}
+ && pecl install xhprof
 {%- set install_extensions=@('php.install_extensions')|merge(@('php.cli.install_extensions'))|filter(v => v is not empty) %}
 {%- if install_extensions %} \
- && cd /root/installer \
+RUN cd /root/installer \
  && ./enable.sh \
     {{ install_extensions|join(" \\\n    ") }}
 {% endif %}
@@ -40,18 +32,6 @@ ENV APP_MODE={{ @('app.mode') }} \
 
 USER build
 
-{% if @('node.version') is not null %}
-RUN . /home/build/.nvm/nvm.sh \
- && nvm install {{ @('node.version') }} \
- && nvm use {{ @('node.version') }} \
- && nvm alias default {{ @('node.version') }} \
- && npm install -g yarn
-{% endif %}
-
-{% if @('php.composer.major_version') != '1' %}
-RUN composer --no-plugins global remove hirak/prestissimo
-{% endif %}
-
 {% if @('app.build') == 'static' %}
 COPY --chown=build:build .my127ws/application  /home/build/application
 COPY --chown=build:build ./                    /app
@@ -62,10 +42,6 @@ VOLUME /home/build/application
 {% endif %}
 
 USER root
-
-{% if version_compare(@('php.ext-xdebug.version'), '3', '>=') and version_compare(@('php.version'), '7', '>=') and version_compare(@('php.version'), '8', '<') %}
-RUN pecl -q upgrade xdebug
-{% endif %}
 
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]

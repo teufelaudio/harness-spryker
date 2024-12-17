@@ -1,13 +1,13 @@
 
 attributes:
   spryker:
-    mode: 'production'
+    mode: 'development'
   namespace: =@('workspace.name') ~ '-' ~ exec("git rev-parse --short HEAD")
   hostname: =@('workspace.name') ~ '.' ~ @('domain')
   app:
     build: static
     version: =exec("git log -n 1 --pretty=format:'%H'")
-    mode: production
+    mode: development
   php:
     fpm:
       ini:
@@ -16,3 +16,13 @@ attributes:
     ini:
       opcache.validate_timestamps: Off
       error_reporting: "E_ALL & ~E_DEPRECATED & ~E_STRICT"
+  services:
+    cron:
+      enabled: true
+    php-base:
+      environment:
+        SPRYKER_BUILD_HASH: = @('spryker.build_hash')
+    console:
+      build:
+        environment:
+          SPRYKER_BUILD_HASH: = @('spryker.build_hash')

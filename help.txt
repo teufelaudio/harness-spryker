@@ -1,0 +1,35 @@
++----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
+| ws exec app welcome                                | Display all local urls and credentials                                                                                               |
+| ws enable                                          | Switch it on                                                                                                                         |
+| ws disable                                         | Switch it off (project containers)                                                                                                   |
+| ws poweroff                                        | Switch all containers off including global containers like traefik and mailhog                                                       |
+| ws global service proxy (enable|disable)           | Control the traefik container (DNS magic) https://my127.site/dashboard                                                               |
+| ws global service mail (enable|disable)            | Control the mailhog container (email magic) https://mail.my127.site                                                                  |
+| ws ps                                              | View running containers                                                                                                              |
+| ws exec [command]                                  | Run any command as the build user inside the console container                                                                       |
+| ws logs [options] [services]                       | Display the docker logs, eg 'ws logs -f nginx php-fpm'                                                                               |
+| ws console                                         | Open a bash terminal for the console container                                                                                       |
+| ws composer [command] [options]                    | Run a composer command inside the console, eg 'composer install -o'                                                                  |
+| ws composer test-quality                           | Run code quality checks                                                                                                              |
+| ws feature xdebug (on|off)                         | Start or stop xdebug for a web session                                                                                               |
+| ws feature xdebug cli (on|off)                     | Start or stop xdebug for a cli session                                                                                               |
+| ws feature blackfire (on|off)                      | Start or stop blackfire for a web session                                                                                            |
+| ws feature blackfire cli (on|off)                  | Start or stop blackfire for a cli session                                                                                            |
+| ws feature buggregator (on|off)                    | Start or stop buggregator for cli and web sessions                                                                                   |
+| ws harness update existing                         | Apply a new or updated harness to the current environment                                                                            |
+| ws harness update fresh                            | Apply a new or updated harness with a fresh install                                                                                  |
+| ws external-images config                          | Display docker images used by the project containers                                                                                 |
+| ws external-images pull                            | Fetch latest image versions, eg we have a new image for a new PHP version                                                            |
+| ws mutagen (start|stop|pause|resume)               | Mutagen all-the-things                                                                                                               |
+| ws npm [command]                                   | Run npm command inside the container                                                                                                 |
+| ws destroy                                         | Burn it all to the ground                                                                                                            |
+| ws harness prepare                                 | Recompile the harness files                                                                                                          |
+| ws git hooks                                       | Install project git hooks                                                                                                            |
+| ws app refresh                                     | Recompile application files and run db migrations. Recommended to run this when you switch branches.                                 |
+| ws import production database (local|qa)           | Import full production data                                                                                                          |
+| ws import production reduced-database (local|qa)   | Import reduced (no orders and only 6 stores) production data                                                                         |
+| ws config dump --key=[workspace attribute]         | Show the resolved value for an attribute key, eg 'ws config dump --key=php.fpm.ini'                                                  |
+| ws secret encrypt '[text to encrypt]'              | Encrypt a string to be stored in the repo (make sure you enclose the secret in single quotes), eg "ws secret encrypt 'api-password'" |
+| ws run playwright                                  | Run the local/CI playwright scenarios                                                                                                |
+| ws help                                            | Show this help                                                                                                                       |
++----------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+

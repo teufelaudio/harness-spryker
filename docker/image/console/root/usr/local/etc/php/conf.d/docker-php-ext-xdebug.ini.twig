@@ -2,7 +2,8 @@
 
 {% if bool(xdebug.cli.enable) %}
   zend_extension=xdebug.so
-  {% for key, value in xdebug.config['v' ~ xdebug.version] -%}
+  {% for key, value in xdebug.config['v' ~ xdebug.version|split('.')[0]] -%}
     xdebug.{{ key }}={{ value }}
   {% endfor %}
+  opcache.jit_buffer_size = 0
 {% endif %}

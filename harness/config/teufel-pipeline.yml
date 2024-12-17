@@ -1,0 +1,45 @@
+# Reason why this command is override: https://github.com/inviqa/harness-base-php/pull/713
+command('app deploy <environment>'):
+  env:
+    ENVIRONMENT: = input.argument('environment')
+    NAMESPACE:   = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
+    CLUSTER:     = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
+    TIMEOUT:     = @('helm.timeout')
+  exec: |
+    #!bash(harness:/helm)|=
+    set -o pipefail
+    cd "${ENVIRONMENT}"
+    cat <<EOF
+    ==================================================
+    HINT: in case this failed, it might be due to no space left on the disk. 
+    Try freeing some space. Here you got some commands for debugging.
+    ==================================================
+    kubectl get ns # display the namespaces 
+    helm3 list -A  # display all namespaces with deployments
+    # The namespace might have work (created with kubectl), but helm3 failed creating a deployment
+    # To remove an unused feature env, you have to delete its namespace and deployment
+    # First removing the deployment using helm3
+    helm3 delete lautsprecher-teufel-pr-NUMBER -n lautsprecher-teufel-pr-NUMBER
+    # Second removing the namespace using kubectl
+    kubectl delete ns lautsprecher-teufel-pr-NUMBER
+    EOF
+    (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)
+    passthru helm --debug dependency build
+    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" "${NAMESPACE}" ./
+    if [[ "$ENVIRONMENT" != "qa" ]]; then
+      export KUBECONFIG="${PWD}/kubectl.config.yaml"
+      (cd ../../../ && tools/scripts/run_feature_env.sh "$NAMESPACE")
+    fi
+
+command('app stop <environment>'):
+  env:
+    ENVIRONMENT: = input.argument('environment')
+    NAMESPACE: = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
+    CLUSTER: = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
+  exec: |
+    #!bash(harness:/helm)|=
+    set -o pipefail
+    cd "${ENVIRONMENT}"
+    (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)
+    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" delete --wait --timeout "1m" --namespace "${NAMESPACE}" "${NAMESPACE}"
+    passthru kubectl --kubeconfig="${PWD}/kubectl.config.yaml" delete namespace "${NAMESPACE}"

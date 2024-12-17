@@ -1,0 +1,19 @@
+# This file is used to overwrite the default configuration of the workspace harness.
+# It is named like this to ensure it is loaded after default harness configurations.
+
+command('external-images pull [<service>]'):
+  env:
+    SERVICE: = input.argument('service')
+  exec: |
+    #!bash(workspace:/)|@
+    CONF_ARGS=()
+    if [ -n "${CI:-}" ] || [ -n "${BUILD_ID:-}" ]; then
+      CONF_ARGS+=(--skip-exists)
+    fi
+
+    if [ -n "${SERVICE}" ]; then
+      CONF_ARGS+=("$SERVICE")
+    fi
+    echo '@('docker.registry.password')' | run docker login --username='@('docker.registry.username')' --password-stdin '@('docker.registry.url')'
+    passthru "ws external-images config $(printf '%q ' "${CONF_ARGS[@]}") | docker-compose --progress=quiet -f - pull"
+    run docker logout '@('docker.registry.url')'

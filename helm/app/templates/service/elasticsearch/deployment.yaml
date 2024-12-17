@@ -27,8 +27,8 @@ spec:
         app.service: {{ $.Values.resourcePrefix }}elasticsearch
     spec:
       securityContext:
-        fsGroup: 1000
         runAsUser: 1000
+        fsGroup: 1000
       containers:
       - env:
         - name: ES_JAVA_OPTS
@@ -44,9 +44,6 @@ spec:
           limits:
             memory: {{ .resources.memory }}
           requests:
-            {{- with ((.resources.cpu | default (dict)).request | default nil) }}
-            cpu: {{ . }}
-            {{- end }}
             memory: {{ .resources.memory }}
         readinessProbe:
           tcpSocket:
@@ -56,6 +53,10 @@ spec:
         volumeMounts:
         - name: {{ $.Values.resourcePrefix }}elasticsearch-persistent-storage
           mountPath: /usr/share/elasticsearch/data
+{{- if $.Values.docker.image_pull_config }}
+      imagePullSecrets:
+      - name: {{ $.Values.resourcePrefix }}image-pull-config
+{{- end }}
       restartPolicy: Always
       volumes:
       - name: {{ $.Values.resourcePrefix }}elasticsearch-persistent-storage

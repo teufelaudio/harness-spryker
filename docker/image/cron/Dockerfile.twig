@@ -1,5 +1,5 @@
 {% if @('app.build') == 'static' %}
-FROM {{ @('docker.repository') ~ ':' ~ @('app.version') }}-php-fpm
+FROM {{ @('docker.repository') ~ '/php-fpm:' ~ @('app.version') }}
 {% else %}
 FROM {{ @('workspace.name') ~ '-php-fpm:dev' }}
 {% endif %}
@@ -11,7 +11,14 @@ RUN apt-get update -qq \
  && DEBIAN_FRONTEND=noninteractive apt-get -qq -y --no-install-recommends install \
    cron \
    sudo \
- # clean \
+   wget \
+   gnupg2 \
+   unzip \
+   procps \
+ && echo "deb http://apt.postgresql.org/pub/repos/apt bullseye-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+ && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
+ && apt-get update -qq \
+ && apt-get install -y postgresql-client-14 \
  && apt-get auto-remove -qq -y \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* \
@@ -34,5 +41,6 @@ ENV APP_MODE {{ @('app.mode') }}
 ENTRYPOINT ["/entrypoint.sh"]
 {% else %}
 ENTRYPOINT ["/entrypoint.dynamic.sh"]
+ENTRYPOINT ["/entrypoint.dynamic.with.wait.sh"]
 {% endif %}
 CMD ["sleep", "infinity"]

@@ -1,0 +1,28 @@
+# this variable is set by the CI runner (Jenkins / Gitlab)
+function('pr_number'): |
+  #!bash(workspace:/)
+  =${BRANCH_NAME:-mr-$CI_MERGE_REQUEST_IID}
+
+# following variables are set by the CI runner (Jenkins / Gitlab)
+function('branch_name'): |
+  #!bash(workspace:/)
+  name=${BRANCH_NAME:-$CI_COMMIT_BRANCH}
+  name=${name:-$CI_MERGE_REQUEST_SOURCE_BRANCH_NAME}
+  =$name
+
+# this variable is set by the CI runner (Jenkins / Gitlab)
+function('dependency_proxy_prefix'): |
+  #!bash(workspace:/)
+  =${CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX:+$CI_DEPENDENCY_PROXY_DIRECT_GROUP_IMAGE_PREFIX/}
+
+function('generate_build_hash'): |
+  #!bash(workspace:/)  
+  =$(git rev-parse --verify HEAD 2>/dev/null)
+
+function('join', [separator, array]): |
+  #!php
+  = implode($separator, $array);
+
+function('get_env', [key]): |
+  #!php
+  = getenv($key);

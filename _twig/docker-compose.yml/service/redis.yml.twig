@@ -1,12 +1,12 @@
-{% set command = @('services.redis.options')
-  | filter(v => v is not empty)
-  | map((value, var) => '--' ~ var ~ ' ' ~ value|join(' --' ~ var ~ ' '))
-  | reduce((carry, v) => carry|merge([v]), []) %}
   redis:
     image: {{ @('services.redis.image')  }}
-    command: {{ to_nice_yaml(command, 2, 6) }}
+    # evict any least recently used key even if they don't have a TTL
+    command: redis-server --maxmemory {{ @('redis.max_memory') }} --maxmemory-policy allkeys-lru --save 3600 1 --save 300 100 --save 60 10000
     labels:
-      # deprecated, a later workspace release will disable by default
       - traefik.enable=false
     networks:
       - private
+{% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}
+    ports:
+      - "127.0.0.1:0:6379"
+{% endif %}

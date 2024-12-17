@@ -1,0 +1,156 @@
+command('npm %'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|=
+    passthru "docker-compose exec -T -u build console bash -c 'source /home/build/.nvm/nvm.sh && npm ={ input.argument('%') }'"
+
+command('test frontend'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|=
+    passthru ws npm run test
+
+command('git hooks'):
+  exec: |
+    #!bash(workspace:/)|@
+    run bash -c ./tools/scripts/git-hooks/init.sh
+
+command('app refresh [--with-fe]'):
+  env:
+    WITH_FE: = input.option('with-fe')
+  exec: |
+    #!bash(workspace:/)|@
+    passthru "ws exec composer install -o"
+    passthru "ws exec rm -rf data/*/cache"
+    passthru "ws exec rm -rf data/cache/oms"
+    passthru "ws exec vendor/bin/console transfer:generate"
+    passthru "ws exec vendor/bin/console propel:install -o"
+    passthru "ws exec vendor/bin/console cache:empty-all"
+    passthru "ws exec vendor/bin/console dev:ide:generate-auto-completion"
+    if [ $WITH_FE ]; then
+      passthru "ws exec app build"
+    fi
+
+# check if propel schema is out of sync with migration files
+command('check propel migrations'):
+  exec: |
+    #!bash(workspace:/)|=
+    DIFF_OUTPUT="$(ws exec vendor/bin/console propel:diff)"
+    if (echo "$DIFF_OUTPUT" | grep "file successfully created") > /dev/null 2>&1; then
+      echo "Propel schema is out of sync with migrations, please run propel:diff and commit the migration file!"
+      exit 1
+    fi
+
+command('copy ci artifacts'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|=
+    ws exec app ci:archive_logs      
+    docker-compose exec php-fpm /lib/archive_logs.sh
+    docker-compose cp console:/tmp/artifacts artifacts
+    docker-compose cp php-fpm:/tmp/artifacts artifacts/web      
+    tar cvzf artifacts.tar.gz artifacts
+
+command('copy coverage report'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|=
+    docker-compose cp console:/app/data/phpunit-coverage-report phpunit-coverage-report
+
+command('prepare metaways config'): |
+  #!php
+  $ws->confd('harness:/metaways')->apply();
+  $config = ".my127ws/metaways/.env";
+  if (!file_exists($config)) {
+    throw new \Exception(sprintf("Metaways env config file %s not found", $config));
+  }
+  copy($config, ".env");
+
+command('import production database %'):
+  env:
+    AWS_ACCESS_KEY_ID: = @('digital_ocean.id')
+    AWS_SECRET_ACCESS_KEY: = @('digital_ocean.secret')
+    ENV: = input.argument('%') === '' ? 'local':input.argument('%')
+    FEATURE_ENABLE_ALL_STORES: = @('spryker.enable_all_stores')
+  exec: |
+    #!bash(workspace:/)|=
+    if [ $ENV = "local" ] && [ $FEATURE_ENABLE_ALL_STORES != "yes" ]; then
+      echo "> Did you forget to enable all stores in your \`workspace.override.yml\`?"
+      echo "> Make sure that you have this -> \`attribute('spryker.enable_all_stores'): yes\`"
+      echo "> And exec \`ws harness prepare && ws enable\` afterwards."
+      exit 1
+    fi
+    passthru "docker-compose exec console gogo db-download --full"
+    tools/scripts/db_restore.sh $ENV
+
+command('import production reduced-database %'):
+  env:
+    AWS_ACCESS_KEY_ID: = @('digital_ocean.id')
+    AWS_SECRET_ACCESS_KEY: = @('digital_ocean.secret')
+    ENV: = input.argument('%') === '' ? 'local':input.argument('%')
+  exec: |
+    #!bash(workspace:/)|=
+    passthru "docker-compose exec console gogo db-download"
+    tools/scripts/db_restore.sh $ENV --reduced
+
+# the default ws feature xdebug cli could not be used for pipeline env as it does not have volumes
+command('feature pipeline xdebug cli (on|off)'):
+  env:
+    ATTR_KEY: 'php.ext-xdebug.cli.enable'
+    ATTR_VAL: = input.command(5) == 'on' ? 'yes':'no'
+  exec: |
+    #!bash(workspace:/)|=
+    ws set $ATTR_KEY $ATTR_VAL
+    echo 'Updating templates in .my127ws/'
+    run ws install --step=prepare
+    echo 'Bringing up console with the new setting'
+    docker cp .my127ws/docker/image/console/root/usr/local/etc/php/conf.d "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/usr/local/etc/php/"
+    echo 'Done'
+
+# overwritten core harness command to disable TTY, so that we can forward only stdout (lighthouse result json) to a file
+command('lighthouse --with-results'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+    OUTPUT_RESULTS:       = input.option('with-results') ? 'yes':'no'
+  exec: |
+    #!bash(workspace:/)|@
+    docker-compose run -T --rm lighthouse bash -i /app/run.sh
+
+command('lighthouse run-and-publish'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|@
+    ws lighthouse --with-results > data/lighthouse.json
+    docker cp data/lighthouse.json "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/app/data/lighthouse.json"
+    passthru ws exec vendor/bin/console lighthouse:result:publish
+
+command('run playwright'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|@
+    docker-compose run --rm playwright /app/tools/scripts/playwright.sh
+
+command('run playwright-ci'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|@
+    docker-compose run --rm playwright /app/tools/scripts/playwright_ci.sh
+
+command('docker login'):
+  env:
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)|@
+    echo '@('docker.registry.password')' | run docker login --username='@('docker.registry.username')' --password-stdin '@('docker.registry.url')'
+
+command('help'):
+  exec: |
+    #!bash(workspace:/)|@
+    cat tools/workspace/help.txt

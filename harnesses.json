@@ -12,7 +12,7 @@
     },
     "v1.6.1": {
       "type": "tar.gz",
-      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/fix/WEBDEV-9575-fix-rabbitmq-data-persistence.tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.6.1.tar.gz",
       "date": "2024-12-31"
     }
   }

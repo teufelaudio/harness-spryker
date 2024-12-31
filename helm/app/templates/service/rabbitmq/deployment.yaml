@@ -11,6 +11,8 @@ metadata:
     app.kubernetes.io/component: rabbitmq
     app.service: {{ $.Values.resourcePrefix }}rabbitmq
 spec:
+  # Set fixed hostname. Reference: https://github.com/docker-library/rabbitmq/issues/106
+  hostname: rabbitmq
   replicas: 1
   selector:
     matchLabels:

@@ -49,7 +49,7 @@ command('copy ci artifacts'):
   exec: |
     #!bash(workspace:/)|=
     ws exec app ci:archive_logs      
-    docker-compose exec php-fpm /lib/archive_logs.sh
+    docker-compose exec php-fpm /usr/lib/archive_logs.sh
     docker-compose cp console:/tmp/artifacts artifacts
     docker-compose cp php-fpm:/tmp/artifacts artifacts/web      
     tar cvzf artifacts.tar.gz artifacts

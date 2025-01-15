@@ -152,5 +152,5 @@ command('docker login'):
 
 command('help'):
   exec: |
-    #!bash(workspace:/)|@
-    cat tools/workspace/help.txt
+    #!bash(harness:/)|@
+    cat help.txt

@@ -76,6 +76,7 @@ command('import production database %'):
     AWS_SECRET_ACCESS_KEY: = @('digital_ocean.secret')
     ENV: = input.argument('%') === '' ? 'local':input.argument('%')
     FEATURE_ENABLE_ALL_STORES: = @('spryker.enable_all_stores')
+    COMPOSE_PROJECT_NAME: = @('namespace')
   exec: |
     #!bash(workspace:/)|=
     if [ $ENV = "local" ] && [ $FEATURE_ENABLE_ALL_STORES != "yes" ]; then
@@ -84,7 +85,7 @@ command('import production database %'):
       echo "> And exec \`ws harness prepare && ws enable\` afterwards."
       exit 1
     fi
-    passthru "docker-compose exec console gogo db-download --full"
+    passthru "docker-compose exec console gogo db-download --full --silent"
     tools/scripts/db_restore.sh $ENV
 
 command('import production reduced-database %'):
@@ -92,9 +93,10 @@ command('import production reduced-database %'):
     AWS_ACCESS_KEY_ID: = @('digital_ocean.id')
     AWS_SECRET_ACCESS_KEY: = @('digital_ocean.secret')
     ENV: = input.argument('%') === '' ? 'local':input.argument('%')
+    COMPOSE_PROJECT_NAME: = @('namespace')
   exec: |
     #!bash(workspace:/)|=
-    passthru "docker-compose exec console gogo db-download"
+    passthru "docker-compose exec console gogo db-download --silent"
     tools/scripts/db_restore.sh $ENV --reduced
 
 # the default ws feature xdebug cli could not be used for pipeline env as it does not have volumes

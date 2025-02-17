@@ -57,10 +57,6 @@ attributes:
           enabled: true
         playwright:
           enabled: false # For the nightly pipeline, we need to enable this via an env var
-        nginx:
-          environment_secrets:
-            DB_ARCHIVE_USER: = @('services.postgres.environment.ARCHIVE_USER')
-            DB_ARCHIVE_PASS: = @('services.postgres.environment.ARCHIVE_PASS')
       ingress:
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-http
@@ -88,9 +84,6 @@ attributes:
             DOCKER_IMAGE_JENKINS_RUNNER: = @('docker.repository') ~ '/jenkins-runner:' ~ @('app.version')
         console:
           enabled: true
-        nginx:
-          environment:
-            ZED_HOST_ARCHIVE: = 'zed-archive-' ~ @('pipeline.preview.hostname')
       persistence:
         enabled: false
 
@@ -114,8 +107,6 @@ attributes:
               template_key_value('ZED_HOST_{{key}}', @('pipeline.qa.zed.external_hosts')),
               template_key_value('ZED_API_HOST_{{key}}', @('pipeline.qa.zed_api.external_hosts'))
             ])"
-          environment:
-            ZED_HOST_ARCHIVE: = 'zed-archive-' ~ @('pipeline.qa.hostname')
         elasticsearch:
           resources:
             memory: 1024Mi
@@ -163,8 +154,6 @@ attributes:
             template_key_value('ZED_HOST_{{key}}', @('pipeline.uat.zed.external_hosts')),
             template_key_value('ZED_API_HOST_{{key}}', @('pipeline.uat.zed.external_hosts'))
           ])"
-          environment:
-            ZED_HOST_ARCHIVE: = 'zed-archive-' ~ @('pipeline.uat.hostname')
         tideways:
           environment:
             TIDEWAYS_HOSTNAME: = @('pipeline.uat.hostname')

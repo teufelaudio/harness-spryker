@@ -103,7 +103,6 @@ attributes:
     password: spryker
     vhosts:
       default: '/'
-      product-document-service: 'product-document-service'
     port_forward: []
     users:
       - username: spryker

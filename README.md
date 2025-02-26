@@ -18,3 +18,12 @@ To generate and encrypt secrets for pipeline environments:
 https://github.com/inviqa/k8s-project-cluster/blob/0.1.x-dev/docs/cluster-management/sealed-secrets/README.md
 
 [Workspace]: https://github.com/my127/workspace
+
+## How to test?
+There are two modes of this harness: static (for CI environment) and dynamic (for local environment).
+You can test both of them using below command:
+```sh
+.ci/test static
+.ci/test dynamic
+```
+It will create a new directory at `.ci/tmp-test` that will compile the harness and find any twig compilation errors.

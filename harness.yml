@@ -102,10 +102,18 @@ attributes:
     user: spryker
     password: spryker
     vhosts:
-      default: 'de-spryker'
-      DE: = 'de-spryker'
-      AT: = 'at-spryker'
-      US: = 'us-spryker'
+      default: '/'
+    port_forward: []
+    users:
+      - username: spryker
+        password_hash: yRrkqC5fk0FMKj8psg3CmwF8K0YhQL5x6bfRXBtfve+BIq3g
+        tags:
+          - administrator
+        permissions:
+          - vhost: '/'
+            configure: '.*'
+            write: '.*'
+            read: '.*'
   jenkins:
     host: jenkins
     port: 8080

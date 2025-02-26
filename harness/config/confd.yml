@@ -21,6 +21,7 @@ confd('harness:/'):
   - { src: docker/image/elasticsearch/Dockerfile }
   - { src: docker/image/lighthouse/Dockerfile }
   - { src: docker/image/lighthouse/root/app/run.sh }
+  - { src: docker/image/rabbitmq/root/etc/rabbitmq/definitions.json }
   - { src: docker/image/nginx/Dockerfile }
   - { src: docker/image/nginx/root/docker-entrypoint.d/config_render.sh }
   - { src: docker/image/nginx/root/etc/nginx/conf.d/0-nginx.conf }

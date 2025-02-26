@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+set -o pipefail
+set -o xtrace
+
+export path_test=".ci/tmp-test"
+
+function setup()
+(
+    local mode="$1"
+
+    if [ -d "${path_test}" ]; then
+        rm -rf "${path_test}"
+    fi
+
+    cp -ap ".ci/sample-${mode}" "${path_test}"
+    rsync --archive --exclude="**/.git" --exclude="**/.ci" ./ "${path_test}/.my127ws/"
+)
+
+function prepare_environment()
+(
+    cd "${path_test}"
+    ws harness prepare
+)
+
+function main()
+{
+    local mode="$1"
+
+    setup "$mode"
+    prepare_environment
+}
+
+main "$@"

@@ -8,7 +8,6 @@
 {% for user in @('rabbitmq.users') %}
   {% set users = users | merge([{
     "hashing_algorithm": "rabbit_password_hashing_sha256",
-    "limits": {},
     "name": user.username,
     "password_hash": user.password_hash,
     "tags": user.tags

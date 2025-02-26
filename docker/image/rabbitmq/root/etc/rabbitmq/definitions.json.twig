@@ -1,0 +1,40 @@
+{% spaceless %}
+{% set vhosts = [] %}
+{% for vhost in @('rabbitmq.vhosts') %}
+  {% set vhosts = vhosts | merge([{"name": vhost,"metadata": {"description": "","tags": []}, "limits": []}]) %}
+{% endfor %}
+{% set users = [] %}
+{% set permissions = [] %}
+{% for user in @('rabbitmq.users') %}
+  {% set users = users | merge([{
+    "hashing_algorithm": "rabbit_password_hashing_sha256",
+    "limits": {},
+    "name": user.username,
+    "password_hash": user.password_hash,
+    "tags": user.tags
+  }]) %}
+  {% for permission in user.permissions %}
+    {% set permissions = permissions | merge([{
+      "configure": permission.configure,
+      "read": permission.read,
+      "user": user.username,
+      "vhost": permission.vhost,
+      "write": permission.write
+    }]) %}
+  {% endfor %}
+{% endfor %}
+{% endspaceless %}
+{
+  "bindings": [],
+  "exchanges": [],
+  "global_parameters": [],
+  "parameters": [],
+  "permissions": {{ permissions | json_encode(constant('JSON_UNESCAPED_SLASHES')) }},
+  "policies": [],
+  "queues": [],
+  "rabbit_version": "{{ @('rabbitmq.version') }}",
+  "rabbitmq_version": "{{ @('rabbitmq.version') }}",
+  "topic_permissions": [],
+  "users": {{ users | json_encode(constant('JSON_UNESCAPED_SLASHES')) }},
+  "vhosts": {{ vhosts | json_encode(constant('JSON_UNESCAPED_SLASHES')) }}
+}

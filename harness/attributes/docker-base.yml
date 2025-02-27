@@ -140,14 +140,18 @@ attributes:
     rabbitmq:
       enabled: "= 'rabbitmq' in @('app.services')"
       image: = @('rabbitmq.image') ~ ':' ~ @('rabbitmq.tag')
+      version:
       environment:
         RABBITMQ_DEFAULT_USER: = @('rabbitmq.user')
         RABBITMQ_DEFAULT_VHOST: = @('rabbitmq.vhosts.default')
+        RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions '/etc/rabbitmq/definitions.json'"
       environment_secrets:
         RABBITMQ_DEFAULT_PASS: = @('rabbitmq.password')
         RABBITMQ_ERLANG_COOKIE: = @('rabbitmq.erlang_cookie')
       resources:
         memory: "1024Mi"
+    chrome:
+      image: = 'yukinying/chrome-headless-browser-stable:125.0.6422.141'
     redis:
       image: redis:6-alpine
       options:

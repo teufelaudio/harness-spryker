@@ -15,3 +15,9 @@
       - traefik.port={{ @('rabbitmq.api_port') }}
       - co.elastic.logs/module=rabbitmq
       - co.elastic.metrics/module=rabbitmq
+    volumes:
+      - ./.my127ws/docker/image/rabbitmq/root/etc/rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./.my127ws/docker/image/rabbitmq/root/etc/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+{% if @('app.build') != 'static' and @('rabbitmq.port_forward') is not empty %}
+    ports: {{ to_nice_yaml(@('rabbitmq.port_forward'), 2, 6) | raw }}
+{% endif %}

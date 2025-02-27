@@ -2,6 +2,8 @@ workspace('ci-spryker-sample-dynamic'):
   description: generated local workspace for ci-spryker-sample.
   harness: inviqa/spryker
 
+harness.repository.source('name'): ./harnesses.json
+
 attribute('aws.bucket'): null
 attribute('app.repository'): null
 attribute('aws.access_key_id'): null

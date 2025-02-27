@@ -21,6 +21,8 @@ https://github.com/inviqa/k8s-project-cluster/blob/0.1.x-dev/docs/cluster-manage
 
 ## How to test?
 There are two modes of this harness: static (for CI environment) and dynamic (for local environment).
+Static mode is a fixed file system, and dynamic uses mutagen to sync file changes with the console and php-fpm containers.
+
 You can test both of them using below command:
 ```sh
 .ci/test static

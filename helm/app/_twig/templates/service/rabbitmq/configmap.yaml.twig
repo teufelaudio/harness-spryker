@@ -1,4 +1,6 @@
 {% set blocks  = 'docker/image/rabbitmq/root/etc/rabbitmq/' %}
+{%- set config = include(blocks ~ 'definitions.json.twig') %}
+{%- set plugins = include(blocks ~ 'enabled_plugins') %}
 {% verbatim %}
 {{ if .Values.services.rabbitmq.enabled }}
 apiVersion: v1
@@ -10,8 +12,12 @@ metadata:
 data:
   definitions.json: |
 {% endverbatim %}
-{%- set config = include(blocks ~ 'definitions.json.twig') %}
 {{ indent(config, 4) }}
+{%- verbatim %}
+{{ end }}
+  enabled_plugins: |
+{% endverbatim %}
+{{ indent(plugins, 4) }}
 {%- verbatim %}
 {{ end }}
 {% endverbatim %}

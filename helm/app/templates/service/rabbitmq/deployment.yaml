@@ -61,6 +61,8 @@ spec:
         volumeMounts:
         - name: {{ $.Values.resourcePrefix }}rabbitmq-persistent-storage
           mountPath: /var/lib/rabbitmq
+        - name: {{ $.Values.resourcePrefix }}rabbitmq-configuration
+          mountPath: /etc/rabbitmq/
       restartPolicy: Always
       # Override to add the pull secret to fetch from the private docker.io repo
       imagePullSecrets:
@@ -73,6 +75,9 @@ spec:
 {{- else }}
         emptyDir: {}
 {{- end }}
+      - name: {{ $.Values.resourcePrefix }}rabbitmq-configuration
+        configMap:
+          name: {{ $.Values.resourcePrefix }}rabbitmq-configuration
 status: {}
 {{- end }}
 {{- end }}

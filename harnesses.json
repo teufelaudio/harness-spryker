@@ -34,6 +34,11 @@
       "type": "tar.gz",
       "url": "https://github.com/teufelaudio/harness-spryker/archive/1.6.5.tar.gz",
       "date": "2025-03-03"
+    },
+    "v1.6.6": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.6.6.tar.gz",
+      "date": "2025-03-28"
     }
   }
 }

@@ -4,14 +4,9 @@ STOPSIGNAL SIGTERM
 
 COPY .my127ws/docker/image/console/root /
 RUN chown -R build:build /home/build /app
-
-{% if @('app.build') == 'dynamic' %}
-RUN pecl install xhprof
-{% endif %}
-
 {%- set install_extensions=@('php.install_extensions')|merge(@('php.cli.install_extensions'))|filter(v => v is not empty) %}
-{%- if install_extensions %}
-RUN cd /root/installer \
+{%- if install_extensions %} \
+ && cd /root/installer \
  && ./enable.sh \
     {{ install_extensions|join(" \\\n    ") }}
 {% endif %}

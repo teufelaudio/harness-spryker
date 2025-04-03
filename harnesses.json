@@ -42,8 +42,8 @@
     },
     "v1.6.7": {
       "type": "tar.gz",
-      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/improve-php-dockerfiles.tar.gz",
-      "date": "2025-04-01"
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.6.7.tar.gz",
+      "date": "2025-04-03"
     }
   }
 }

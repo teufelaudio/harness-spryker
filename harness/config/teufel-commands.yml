@@ -113,23 +113,16 @@ command('feature pipeline xdebug cli (on|off)'):
     docker cp .my127ws/docker/image/console/root/usr/local/etc/php/conf.d "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/usr/local/etc/php/"
     echo 'Done'
 
-# overwritten core harness command to disable TTY, so that we can forward only stdout (lighthouse result json) to a file
-command('lighthouse --with-results'):
+command('lighthouse run-and-publish [<url>]'):
   env:
     COMPOSE_PROJECT_NAME: = @('namespace')
-    OUTPUT_RESULTS:       = input.option('with-results') ? 'yes':'no'
-  exec: |
-    #!bash(workspace:/)|@
-    docker-compose run -T --rm lighthouse bash -i /app/run.sh
-
-command('lighthouse run-and-publish'):
-  env:
-    COMPOSE_PROJECT_NAME: = @('namespace')
+    COMPOSE_BIN: = @('docker.compose.bin')
+    TARGET_URL: = input.argument('url') ? input.argument('url'):@('lighthouse.target.url')
   exec: |
     #!bash(workspace:/)|@
     ws lighthouse --with-results > data/lighthouse.json
     docker cp data/lighthouse.json "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/app/data/lighthouse.json"
-    passthru ws exec vendor/bin/console lighthouse:result:publish
+    passthru $COMPOSE_BIN exec -e TARGET_URL=$TARGET_URL console vendor/bin/console lighthouse:result:publish
 
 command('run playwright'):
   env:

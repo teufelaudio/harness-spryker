@@ -122,7 +122,7 @@ command('lighthouse run-and-publish [<url>]'):
     #!bash(workspace:/)|@
     ws lighthouse --with-results > data/lighthouse.json
     docker cp data/lighthouse.json "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/app/data/lighthouse.json"
-    passthru $COMPOSE_BIN exec -e TARGET_URL=$TARGET_URL console vendor/bin/console lighthouse:result:publish
+    passthru $COMPOSE_BIN exec -e TARGET_URL="$TARGET_URL" console vendor/bin/console lighthouse:result:publish
 
 command('run playwright'):
   env:

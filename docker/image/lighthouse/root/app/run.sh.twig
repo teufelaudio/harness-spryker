@@ -6,10 +6,16 @@ set -o errexit
 
 TARGET_URL="${TARGET_URL:-${1:-}}"
 OUTPUT_RESULTS="${OUTPUT_RESULTS:-no}"
+PRESET=""
 
 if [ -z "$TARGET_URL" ] || ! [[ "$TARGET_URL" =~ https?:// ]]; then
   echo "Please provide a target URL to run lighthouse against" >&2
   exit 1
+fi
+
+if [ "$DESKTOP" == "yes" ]; then
+  echo "Running in desktop mode" >&2
+  PRESET="--preset=desktop"
 fi
 
 function output_results()
@@ -27,6 +33,7 @@ lighthouse --no-enable-error-reporting \
            --chrome-flags="--headless --no-sandbox=true --ignore-certificate-errors --disable-dev-shm-usage" \
            --output json \
            --output-path=/home/headless/lighthouse-results.json \
+           ${PRESET} \
            "${TARGET_URL}" >&2
 
 {% if @('lighthouse.success-thresholds.performance.enabled') %}

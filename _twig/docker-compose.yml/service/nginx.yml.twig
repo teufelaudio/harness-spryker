@@ -23,11 +23,11 @@
       - traefik.docker.network=my127ws
       - traefik.port=80
 {% endif %}
-    environment: {{ to_nice_yaml(deep_merge([
+    environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.nginx.environment'),
         @('services.nginx.environment_dynamic'),
         @('services.nginx.environment_secrets')
-      ]), 2, 6) | raw }}
+      ])), 2, 6) | raw }}
     links:
       - php-fpm:php-fpm
     networks:

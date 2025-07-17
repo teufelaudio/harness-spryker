@@ -26,3 +26,12 @@ function('join', [separator, array]): |
 function('get_env', [key]): |
   #!php
   = getenv($key);
+
+function('docker_compose_escape', [array]): |
+  #!php
+  foreach ($array as &$value) {
+    if (is_string($value)) {
+      $value = str_replace('$', '$$', $value);
+    }
+  }
+  = $array;

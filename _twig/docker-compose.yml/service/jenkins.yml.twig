@@ -1,9 +1,9 @@
   jenkins:
     image: {{ @('services.jenkins.image') }}
-    environment: {{ to_nice_yaml(deep_merge([
+    environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
       @('services.jenkins.environment'),
       @('services.jenkins.environment_dynamic'),
-    ]), 2, 6) | raw }}
+    ])), 2, 6) | raw }}
     networks:
       - private
       - shared

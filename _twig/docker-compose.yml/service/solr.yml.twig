@@ -5,11 +5,11 @@
 {% if @('app.build') == 'static' %}
     image: {{ @('services.solr.image') }}
 {% endif %}
-    environment: {{ to_nice_yaml(deep_merge([
+    environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.solr.environment'),
         @('services.solr.environment_dynamic'),
         @('services.solr.environment_secrets')
-      ]), 2, 6) | raw }}
+      ])), 2, 6) | raw }}
     labels:
       - traefik.backend=solr-{{ @('workspace.name') }}
       - traefik.frontend.rule=Host:solr-{{ @('hostname') }}

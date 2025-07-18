@@ -4,11 +4,11 @@
       - traefik.enable=false
     volumes:
       - ./.my127ws/docker/image/postgres/root/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
-    environment: {{ to_nice_yaml(deep_merge([
+    environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.postgres.environment'),
         @('services.postgres.environment_dynamic'),
         @('services.postgres.environment_secrets')
-      ]), 2, 6) | raw }}
+      ])), 2, 6) | raw }}
     networks:
       - private
 {% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}

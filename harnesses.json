@@ -52,8 +52,8 @@
     },
     "v1.6.9": {
       "type": "tar.gz",
-      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/escape-docker-composer-vars.tar.gz",
-      "date": "2025-07-17"
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.6.9.tar.gz",
+      "date": "2025-07-18"
     }
   }
 }

@@ -1,11 +1,5 @@
   elasticsearch:
-{% if @('app.build') == 'dynamic' %}
-    build:
-      context: ./
-      dockerfile: .my127ws/docker/image/elasticsearch/Dockerfile
-{% else %}
     image: {{ @('elasticsearch.image') ~':' ~ @('elasticsearch.tag') }}
-{% endif %}
     labels:
       - traefik.enable=false
     environment:

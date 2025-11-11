@@ -1,5 +1,0 @@
-FROM {{ @('elasticsearch.base_image') }}
-
-COPY .my127ws/docker/image/elasticsearch/root /
-
-RUN chown -R elasticsearch:root /usr/share/elasticsearch

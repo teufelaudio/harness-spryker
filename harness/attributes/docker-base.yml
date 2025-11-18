@@ -71,7 +71,7 @@ attributes:
     queue-worker:
       extends:
         - php-base
-      enabled: false
+      enabled: "= 'queue-worker' in @('app.services')"
       image: = @('docker.repository') ~ ':' ~ @('app.version') ~ '-console'
       publish: false
       resources:

@@ -27,4 +27,4 @@ attributes:
         environment:
           SPRYKER_BUILD_HASH: = @('spryker.build_hash')
     queue-worker:
-      enabled: false
+      enabled: true

@@ -68,6 +68,14 @@ attributes:
       publish: "= @('services.cron.enabled')"
       resources:
         memory: "1024Mi"
+    queue-worker:
+      extends:
+        - php-base
+      enabled: "= 'queue-worker' in @('app.services')"
+      image: = @('docker.repository') ~ ':' ~ @('app.version') ~ '-console'
+      publish: false
+      resources:
+        memory: "1024Mi"
     php-fpm:
       extends:
         - php-base

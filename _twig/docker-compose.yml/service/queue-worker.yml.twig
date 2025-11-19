@@ -5,6 +5,7 @@
       - ./.my127ws/application:/home/build/application
 {% endif %}
     image: {{ @('workspace.name') ~ '-console:dev' }}
+    pull_policy: never
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.php-base.environment'),
         @('services.php-base.environment_dynamic'),

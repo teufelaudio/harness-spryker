@@ -72,7 +72,7 @@ attributes:
       extends:
         - php-base
       enabled: "= 'queue-worker' in @('app.services')"
-      image: = @('docker.repository') ~ ':' ~ @('app.version') ~ '-console'
+      image: = @('services.console.image')
       publish: false
       resources:
         memory: "1024Mi"

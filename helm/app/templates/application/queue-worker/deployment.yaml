@@ -11,7 +11,7 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "15"
 spec:
-  replicas: {{ $.Values.replicas.queue-worker }}
+  replicas: {{ index $.Values.replicas "queue-worker" }}
   revisionHistoryLimit: 2
   strategy:
     type: Recreate

@@ -426,6 +426,7 @@ attributes.default:
 
   replicas:
     varnish: 1
+    queue-worker: 0
 
   persistence:
     enabled: false

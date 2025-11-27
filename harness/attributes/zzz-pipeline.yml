@@ -47,12 +47,14 @@ attributes:
             memory: 1024Mi
         elasticsearch:
           enabled: true
+          resources:
+            memory: 1024Mi
         redis:
           enabled: true
           resources:
-            memory: 2048Mi
+            memory: 1024Mi
           options:
-            maxmemory: '2147483648'
+            maxmemory: '1073741824'
         lighthouse:
           enabled: true
         playwright:
@@ -107,14 +109,6 @@ attributes:
               template_key_value('ZED_HOST_{{key}}', @('pipeline.qa.zed.external_hosts')),
               template_key_value('ZED_API_HOST_{{key}}', @('pipeline.qa.zed_api.external_hosts'))
             ])"
-        elasticsearch:
-          resources:
-            memory: 1024Mi
-        redis:
-          resources:
-            memory: 2048Mi
-          options:
-            maxmemory: '2147483648'
 
     uat:
       enabled: yes

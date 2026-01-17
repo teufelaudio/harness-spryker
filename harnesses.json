@@ -64,6 +64,11 @@
       "type": "tar.gz",
       "url": "https://github.com/teufelaudio/harness-spryker/archive/1.8.0.tar.gz",
       "date": "2025-11-18"
+    },
+    "v1.9.0": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/WEBDEV-10425-spryker-update.tar.gz",
+      "date": "2025-11-18"
     }
   }
 }

@@ -17,7 +17,7 @@ attributes:
     services:
       - chrome
       - postgres
-      - redis
+      - valkey
       - elasticsearch
       - rabbitmq
       - jenkins
@@ -96,8 +96,11 @@ attributes:
   lighthouse:
     target:
       url: = 'https://' ~ @('yves.external_hosts.DE')
+  valkey:
+    protocol: tcp
   redis:
-    protocol: redis
+    protocol: "= @('services.valkey.enabled') ? @('valkey.protocol') : 'redis'"
+    host: "= @('services.valkey.enabled') ? @('valkey.host') : 'redis'"
   rabbitmq:
     user: spryker
     password: spryker
@@ -218,6 +221,8 @@ attributes:
         #hostPath: "..." alternatively for single node testing
         size: 1Gi
     redis:
+      enabled: true
+    valkey:
       enabled: true
     jenkins:
       enabled: true

@@ -1,0 +1,12 @@
+  valkey:
+    image: {{ @('services.valkey.image')  }}
+    # evict any least recently used key even if they don't have a TTL
+    command: valkey-server --maxmemory {{ @('services.valkey.max_memory') }} --maxmemory-policy allkeys-lru --save 3600 1 --save 300 100 --save 60 10000
+    labels:
+      - traefik.enable=false
+    networks:
+      - private
+{% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}
+    ports:
+      - "127.0.0.1:0:6379"
+{% endif %}

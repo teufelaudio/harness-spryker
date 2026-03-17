@@ -1,0 +1,54 @@
+name: Test Harness
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-mode: [static, dynamic]
+    name: Test - ${{ matrix.test-mode }} mode
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Run ${{ matrix.test-mode }} test
+        run: |
+          bash .ci/test ${{ matrix.test-mode }}
+
+      - name: Check generated docker-compose.yml
+        if: always()
+        run: |
+          if [ -f ".ci/tmp-test/docker-compose.yml" ]; then
+            echo "Docker compose file generated successfully"
+            head -50 .ci/tmp-test/docker-compose.yml
+          else
+            echo "Error: docker-compose.yml was not generated"
+            exit 1
+          fi
+
+      - name: Validate docker-compose.yml with docker-compose config
+        run: |
+          cd .ci/tmp-test
+          docker-compose config > /dev/null
+          echo "Docker Compose configuration is valid"
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ matrix.test-mode }}
+          path: .ci/tmp-test/
+          retention-days: 7
+

@@ -32,8 +32,8 @@ jobs:
 
       - name: Install required tools
         run: |
-          apt-get update
-          apt-get install -y rsync
+          sudo apt-get update
+          sudo apt-get install -y rsync
           
           # Download the ws binary from the workspace releases
           curl -L https://github.com/my127/workspace/releases/download/0.4.1/ws -o /tmp/ws

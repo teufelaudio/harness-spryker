@@ -50,18 +50,14 @@ jobs:
       - name: Check generated docker-compose.yml
         if: always()
         run: |
-          if [ -f ".ci/tmp-test/docker-compose.yml" ]; then
+          cd .ci/tmp-test
+          if [ -f "docker-compose.yml" ]; then
             echo "Docker compose file generated successfully"
-            head -50 .ci/tmp-test/docker-compose.yml
           else
             echo "Error: docker-compose.yml was not generated"
             exit 1
           fi
-
-      - name: Validate docker-compose.yml with docker-compose config
-        run: |
-          cd .ci/tmp-test
-          docker-compose config > /dev/null
+          docker compose config > /dev/null
           echo "Docker Compose configuration is valid"
 
       - name: Upload test artifacts

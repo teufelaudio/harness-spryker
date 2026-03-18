@@ -58,6 +58,25 @@ setup_bws_tool() {
   fi
 }
 
+fetch_all_secrets_as_env() {
+  local project_id="$1"
+  local token="$2"
+  bws secret list "$project_id" --access-token "$token" -o env
+}
+
+find_secret_line_by_name() {
+  local secret_name="$1"
+  grep "^${secret_name}="
+}
+
+extract_value_after_equals() {
+  cut -d'=' -f2-
+}
+
+remove_surrounding_quotes() {
+  sed 's/^"\(.*\)"$/\1/'
+}
+
 download_secret() {
   local project_id="$1"
   local secret_name="$2"
@@ -71,12 +90,22 @@ download_secret() {
     exit 1
   fi
 
-  local token
-  token=$(read_token)
+  local token="$(read_token)"
   setup_bws_tool
 
   echo "Fetching secret: ${secret_name}..." >&2
-  bws secret list "$project_id" --access-token "$token" -o env | grep "^${secret_name}=" | cut -d'=' -f2- || echo "Secret '${secret_name}' not found in project '${project_id}'." >&2
+
+  local all_secrets="$(fetch_all_secrets_as_env "$project_id" "$token")"
+  local secret_line="$(echo "$all_secrets" | find_secret_line_by_name "$secret_name")"
+
+  if [ -z "$secret_line" ]; then
+    echo "Secret '${secret_name}' not found in project '${project_id}'." >&2
+    return 1
+  fi
+
+  local secret_value="$(echo "$secret_line" | extract_value_after_equals | remove_surrounding_quotes)"
+
+  echo "$secret_value"
 }
 
 download_all_secrets() {
@@ -92,12 +121,11 @@ download_all_secrets() {
     exit 1
   fi
 
-  local token
-  token=$(read_token)
+  local token="$(read_token)"
   setup_bws_tool
 
   echo "Fetching all secrets for project: ${project_id}..." >&2
-  bws secret list "$project_id" --access-token "$token" -o env > "$output_file"
+  fetch_all_secrets_as_env "$project_id" "$token" > "$output_file"
 
   # Verify that the output file has at least one line with actual content
   if [ ! -s "$output_file" ] || ! grep -q '[^[:space:]]' "$output_file" 2>/dev/null; then

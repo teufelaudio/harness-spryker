@@ -1,5 +1,9 @@
 #!/bin/sh
 
+set -o errexit
+set -o nounset
+set -o pipefail
+
 BWS_VERSION="2.0.0"
 
 read_token() {
@@ -20,7 +24,7 @@ read_token() {
 }
 
 setup_bws_tool() {
-  if ! command -v bws >/dev/null 2>&1; then
+  if ! command -v bws >/dev/null; then
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     ARCH=$(uname -m)
 
@@ -33,8 +37,8 @@ setup_bws_tool() {
         BWS_ARCH="x86_64-apple-darwin"
       fi
       # Install dependencies for macOS (if needed)
-      if ! command -v curl >/dev/null 2>&1 || ! command -v unzip >/dev/null 2>&1; then
-        echo "Error: curl and unzip are required. Please install them first." >&2
+      if ! command -v curl >/dev/null || ! command -v unzip >/dev/null; then
+        echo "Error: curl and unzip are required. Please install them first."
         exit 1
       fi
     else
@@ -45,16 +49,16 @@ setup_bws_tool() {
         BWS_ARCH="x86_64-unknown-linux-musl"
       fi
       # Install dependencies for Linux (Alpine)
-      if command -v apk >/dev/null 2>&1; then
+      if command -v apk >/dev/null; then
         apk add --no-cache curl unzip
       fi
     fi
 
-    echo "Downloading bws for ${OS}/${ARCH} (${BWS_ARCH})..." >&2
+    echo "Downloading bws for ${OS}/${ARCH} (${BWS_ARCH})..."
     curl -L "https://github.com/bitwarden/sdk-sm/releases/download/bws-v${BWS_VERSION}/bws-${BWS_ARCH}-${BWS_VERSION}.zip" -o /tmp/bws.zip
     unzip -o /tmp/bws.zip -d /usr/local/bin/
     chmod +x /usr/local/bin/bws
-    echo "bws installed successfully." >&2
+    echo "bws installed successfully."
   fi
 }
 
@@ -91,12 +95,12 @@ download_secret() {
   fi
 
   local token="$(read_token)"
-  setup_bws_tool
+  setup_bws_tool >&2
 
   echo "Fetching secret: ${secret_name}..." >&2
 
   local all_secrets="$(fetch_all_secrets_as_env "$project_id" "$token")"
-  local secret_line="$(echo "$all_secrets" | find_secret_line_by_name "$secret_name")"
+  local secret_line=$(echo "$all_secrets" | find_secret_line_by_name "$secret_name")
 
   if [ -z "$secret_line" ]; then
     echo "Secret '${secret_name}' not found in project '${project_id}'." >&2
@@ -122,7 +126,7 @@ download_all_secrets() {
   fi
 
   local token="$(read_token)"
-  setup_bws_tool
+  setup_bws_tool >&2
 
   echo "Fetching all secrets for project: ${project_id}..." >&2
   fetch_all_secrets_as_env "$project_id" "$token" > "$output_file"

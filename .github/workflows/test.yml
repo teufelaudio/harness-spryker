@@ -20,8 +20,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v2
+
+      - name: Set up PHP 8.4
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Install required tools
+        run: |
+          apt-get update
+          apt-get install -y rsync
+          
+          # Download the ws binary from the workspace releases
+          curl -L https://github.com/my127/workspace/releases/download/0.4.1/ws -o /tmp/ws
+          chmod +x /tmp/ws
+          sudo mv /tmp/ws /usr/local/bin/ws
+          
+          # Verify installation
+          ws version
 
       - name: Run ${{ matrix.test-mode }} test
         run: |

@@ -1,4 +1,3 @@
-{% spaceless %}
 {% set vhosts = [] %}
 {% for vhost in @('rabbitmq.vhosts') %}
   {% set vhosts = vhosts | merge([{"name": vhost,"metadata": {"description": "","tags": []}, "limits": []}]) %}
@@ -22,7 +21,6 @@
     }]) %}
   {% endfor %}
 {% endfor %}
-{% endspaceless %}
 {
   "bindings": [],
   "exchanges": [],

@@ -1,0 +1,90 @@
+name: Test Harness
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        test-mode: [static, dynamic]
+    name: Test - ${{ matrix.test-mode }} mode
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Compose
+        uses: docker/setup-compose-action@v2
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Set up PHP 8.4
+        uses: "shivammathur/setup-php@v2"
+        with:
+          coverage: "none"
+          php-version: '8.4'
+          tools: composer:v2
+
+      - name: Install required tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rsync
+          
+          # Download the ws binary from the workspace releases
+          curl -L https://github.com/my127/workspace/releases/download/0.4.1/ws -o /tmp/ws
+          chmod +x /tmp/ws
+          sudo mv /tmp/ws /usr/local/bin/ws
+          
+          # Verify installation
+          ws version
+
+      - name: Run ${{ matrix.test-mode }} test
+        run: |
+          bash .ci/test ${{ matrix.test-mode }}
+
+      - name: Check generated docker-compose.yml
+        if: always()
+        run: |
+          cd .ci/tmp-test
+          if [ -f "docker-compose.yml" ]; then
+            echo "Docker compose file generated successfully"
+          else
+            echo "Error: docker-compose.yml was not generated"
+            exit 1
+          fi
+          docker compose config > /dev/null
+          echo "Docker Compose configuration is valid"
+
+      - name: Test helm charts
+        if: always()
+        run: |
+          (
+            cd .ci/tmp-test/.my127ws/helm/preview
+            helm dependency build
+            helm template . > /dev/null
+            echo "Preview env helm chart is valid"
+          )
+          
+          (
+            cd .ci/tmp-test/.my127ws/helm/qa
+            helm dependency build
+            helm template . > /dev/null
+            echo "QA env helm chart is valid"
+          )
+
+      - name: Upload test artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ matrix.test-mode }}
+          path: .ci/tmp-test/
+          retention-days: 7
+

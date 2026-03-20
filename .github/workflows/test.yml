@@ -66,15 +66,19 @@ jobs:
       - name: Test helm charts
         if: always()
         run: |
-          cd .ci/tmp-test/.my127ws/helm/preview
-          helm dependency build
-          helm template . > /dev/null
-          echo "Preview env helm chart is valid"
+          (
+            cd .ci/tmp-test/.my127ws/helm/preview
+            helm dependency build
+            helm template . > /dev/null
+            echo "Preview env helm chart is valid"
+          )
           
-          cd .ci/tmp-test/.my127ws/helm/qa
-          helm dependency build
-          helm template . > /dev/null
-          echo "QA env helm chart is valid"
+          (
+            cd .ci/tmp-test/.my127ws/helm/qa
+            helm dependency build
+            helm template . > /dev/null
+            echo "QA env helm chart is valid"
+          )
 
       - name: Upload test artifacts
         if: failure()

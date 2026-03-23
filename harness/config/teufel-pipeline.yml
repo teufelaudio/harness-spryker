@@ -1,10 +1,11 @@
 # Reason why this command is override: https://github.com/inviqa/harness-base-php/pull/713
 command('app deploy <environment>'):
   env:
-    ENVIRONMENT: = input.argument('environment')
-    NAMESPACE:   = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
-    CLUSTER:     = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
-    TIMEOUT:     = @('helm.timeout')
+    ENVIRONMENT:        = input.argument('environment')
+    NAMESPACE:          = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
+    CLUSTER:            = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
+    TIMEOUT:            = @('helm.timeout')
+    HELM_VALUES_PREFIX: = @('workspace.name')
   exec: |
     #!bash(harness:/helm)|=
     set -o pipefail
@@ -25,7 +26,7 @@ command('app deploy <environment>'):
     EOF
     (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)
     passthru helm --debug dependency build
-    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" "${NAMESPACE}" ./
+    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" --set "${HELM_VALUES_PREFIX}.bitwarden.token=${BWS_ACCESS_TOKEN}" "${NAMESPACE}" ./
     if [[ "$ENVIRONMENT" != "qa" ]]; then
       export KUBECONFIG="${PWD}/kubectl.config.yaml"
       (cd ../../../ && tools/scripts/run_feature_env.sh "$NAMESPACE")

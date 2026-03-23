@@ -1,0 +1,19 @@
+  bitwarden-init:
+    image: alpine:latest
+    environment:
+      BWS_PROJECT_ID: '{{ @('bitwarden.project_id') }}'
+    # Fetch secrets and write to the shared volume
+    command:
+      - sh
+      - -c
+      - |
+        if [ -f /secrets/.env_secrets ]; then
+          echo "Secrets file already exists, skipping fetch."
+          exit 0
+        fi
+        BWS_ACCESS_TOKEN="$$(cat /run/secrets/bws_access_token)" /bitwarden.sh download-all-secrets "$$BWS_PROJECT_ID" /secrets/.env_secrets
+    volumes:
+      - secrets-data:/secrets
+      - .my127ws/harness/scripts/bitwarden.sh:/bitwarden.sh:ro
+    secrets:
+      - bws_access_token

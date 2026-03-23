@@ -8,12 +8,25 @@
     volumes:
       - {{ (syncvolume) ? @('workspace.name') ~ '-sync:/app:nocopy' : ('./:/app' ~ @('docker.compose.host_volume_options')) }}
       - ./.my127ws/application:/home/build/application
+{% if @('services.bitwarden.enabled') %}
+      - secrets-data:/secrets:ro
+{% endif %}
 {% else %}
     image: {{ @('services.jenkins-runner.image') }}
+{% if @('services.bitwarden.enabled') %}
+    volumes:
+      - secrets-data:/secrets:ro
+{% endif %}
 {% endif %}
     depends_on:
-      - console
-      - jenkins
+      console:
+        condition: service_started
+      jenkins:
+        condition: service_started
+{% if @('services.bitwarden.enabled') %}
+      bitwarden-init:
+        condition: service_completed_successfully
+{% endif %}
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.php-base.environment'),
         @('services.php-base.environment_dynamic'),

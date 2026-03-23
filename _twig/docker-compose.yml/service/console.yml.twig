@@ -17,8 +17,15 @@
       - ./.my127ws/docker/image/console/root/usr/lib/task:/usr/lib/task
       - ./.my127ws:/.my127ws
       - ./.bash_history:/home/build/.bash_history
+{% if @('services.bitwarden.enabled') %}
+      - secrets-data:/secrets:ro
+{% endif %}
 {% else %}
     image: {{ @('services.console.image') }}
+{% if @('services.bitwarden.enabled') %}
+    volumes:
+      - secrets-data:/secrets:ro
+{% endif %}
 {% endif %}
     labels:
       - traefik.enable=false
@@ -32,3 +39,8 @@
       ])), 2, 6) | raw }}
     networks:
       - private
+{% if @('services.bitwarden.enabled') %}
+    depends_on:
+      bitwarden-init:
+        condition: service_completed_successfully
+{% endif %}

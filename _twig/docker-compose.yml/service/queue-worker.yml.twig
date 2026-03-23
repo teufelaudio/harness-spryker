@@ -3,9 +3,16 @@
     volumes:
       - {{ (syncvolume) ? @('workspace.name') ~ '-sync:/app:nocopy' : ('./:/app' ~ @('docker.compose.host_volume_options')) }}
       - ./.my127ws/application:/home/build/application
+{% if @('services.bitwarden.enabled') %}
+      - secrets-data:/secrets:ro
+{% endif %}
     image: {{ @('workspace.name') ~ '-console:dev' }}
 {% else %}
     image: {{ @('services.console.image') }}
+{% if @('services.bitwarden.enabled') %}
+    volumes:
+      - secrets-data:/secrets:ro
+{% endif %}
 {% endif %}
     pull_policy: never
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
@@ -22,4 +29,9 @@
       # deprecated, a later workspace release will disable by default
       - traefik.enable=false
     depends_on:
-      - console
+      console:
+        condition: service_started
+{% if @('services.bitwarden.enabled') %}
+      bitwarden-init:
+        condition: service_completed_successfully
+{% endif %}

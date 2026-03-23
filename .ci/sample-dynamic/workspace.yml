@@ -11,5 +11,4 @@ attribute('aws.secret_access_key'): null
 
 attribute('docker.port_forward.enabled'): false
 
-attribute('services.bitwarden.enabled'): true
-attribute('bitwarden.project_id'): 1
+attribute('services.bitwarden.enabled'): false

@@ -1,4 +1,4 @@
-{{ if or .Values.docker.image_pull_config .Values.services.bitwarden.enabled }}
+{{ if .Values.docker.image_pull_config }}
 {{ if .Values.feature.sealed_secrets }}
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
@@ -25,22 +25,6 @@ spec:
         {{- include "chart.labels" $ | nindent 8 }}
   encryptedData:
     .dockerconfigjson: {{ .Values.docker.image_pull_config }}
-{{ else if .Values.services.bitwarden.enabled }}
-spec:
-  organizationId: {{ .Values.bitwarden.organization_id }}
-  secretName: {{ .Values.resourcePrefix }}image-pull-config
-  onlyMappedSecrets: true
-  map:
-    - bwSecretId: {{ .Values.bitwarden.image_pull_config_secret_id }}
-      secretKeyName: .dockerconfigjson
-  template:
-    type: kubernetes.io/dockerconfigjson
-    metadata:
-      labels:
-        {{- include "chart.labels" $ | nindent 8 }}
-  authToken:
-    secretName: {{ .Values.resourcePrefix }}bitwarden-auth-token
-    secretKey: token
 {{ else }}
 type: kubernetes.io/dockerconfigjson
 data:

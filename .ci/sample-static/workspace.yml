@@ -16,4 +16,3 @@ attribute('bitwarden'):
   project_id: proj_1
   organization_id: org_1
   token: ~
-  image_pull_config_secret_id: image_pull_config_secret_1

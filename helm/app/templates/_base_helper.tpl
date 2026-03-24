@@ -74,6 +74,7 @@ spec:
   organizationId: {{ .root.Values.bitwarden.organization_id }}
   secretName: {{ .root.Values.resourcePrefix }}{{ .service_name }}
   onlyMappedSecrets: false
+  useSecretNames: true
   authToken:
     secretName: {{ .root.Values.resourcePrefix }}bitwarden-auth-token
     secretKey: token

@@ -34,8 +34,8 @@ command('app deploy <environment>'):
     fi
     
     (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)
-    passthru helm --debug dependency build
-    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" --set "${HELM_VALUES_PREFIX}.bitwarden.token=${BWS_ACCESS_TOKEN}" --set "${HELM_VALUES_PREFIX}.docker.image_pull_config=${DOCKER_IMAGE_PULL_CONFIG}" "${NAMESPACE}" ./
+    helm --debug dependency build
+    helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" --set "${HELM_VALUES_PREFIX}.bitwarden.token=${BWS_ACCESS_TOKEN}" --set "${HELM_VALUES_PREFIX}.docker.image_pull_config=${DOCKER_IMAGE_PULL_CONFIG}" "${NAMESPACE}" ./
     if [[ "$ENVIRONMENT" != "qa" ]]; then
       export KUBECONFIG="${PWD}/kubectl.config.yaml"
       (cd ../../../ && tools/scripts/run_feature_env.sh "$NAMESPACE")

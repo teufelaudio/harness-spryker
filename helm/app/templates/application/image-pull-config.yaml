@@ -2,9 +2,6 @@
 {{ if .Values.feature.sealed_secrets }}
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
-{{ else if .Values.services.bitwarden.enabled }}
-apiVersion: k8s.bitwarden.com/v1
-kind: BitwardenSecret
 {{ else }}
 apiVersion: v1
 kind: Secret

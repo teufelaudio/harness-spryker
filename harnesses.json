@@ -72,8 +72,8 @@
     },
     "v1.10.0": {
       "type": "tar.gz",
-      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/WEBDEV-11030-bitwarden-secret-manager.tar.gz",
-      "date": "2026-03-17"
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.10.0.tar.gz",
+      "date": "2026-03-25"
     }
   }
 }

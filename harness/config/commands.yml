@@ -1,19 +1,32 @@
 
 command('enable'):
   env:
-    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
-    APP_BUILD:            = @('app.build')
-    APP_MODE:             = @('app.mode')
-    NAMESPACE:            = @('namespace')
-    HAS_ASSETS:           = boolToString(@('aws.bucket') !== null and @('aws.bucket') !== '')
-    COMPOSE_BIN: = @('docker.compose.bin')
-    COMPOSE_PROJECT_NAME: = @('namespace')
+    USE_MUTAGEN:              = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    APP_BUILD:                = @('app.build')
+    APP_MODE:                 = @('app.mode')
+    NAMESPACE:                = @('namespace')
+    HAS_ASSETS:               = boolToString(@('aws.bucket') !== null and @('aws.bucket') !== '')
+    COMPOSE_BIN:              = @('docker.compose.bin')
+    COMPOSE_PROJECT_NAME:     = @('namespace')
     COMPOSE_DOCKER_CLI_BUILD: = @('docker.buildkit.enabled') ? '1':'0'
     DOCKER_BUILDKIT:          = @('docker.buildkit.enabled') ? '1':'0'
+    BITWARDEN_ENABLED:        = boolToString(@('services.bitwarden.enabled'))
   exec: |
     #!bash(workspace:/)
     set -- all
+    if [ "$BITWARDEN_ENABLED" = yes ] && [ -z "$BWS_ACCESS_TOKEN" ]; then
+      export BWS_ACCESS_TOKEN="$(.my127ws/harness/scripts/bitwarden.sh read-token)"
+    fi
     source .my127ws/harness/scripts/enable.sh
+
+command('refresh secrets'):
+  env:
+    COMPOSE_BIN: = @('docker.compose.bin')
+    COMPOSE_PROJECT_NAME: = @('namespace')
+  exec: |
+    #!bash(workspace:/)
+    BWS_ACCESS_TOKEN= $COMPOSE_BIN run --rm bitwarden-init sh -c 'rm -f /secrets/.env_secrets'
+    ws enable
 
 command('enable console'):
   env:

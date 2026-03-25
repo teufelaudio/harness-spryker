@@ -20,7 +20,7 @@ networks:
   shared:
     external: true
     name: my127ws
-{% if syncvolume or @('services.solr.enabled') %}
+{% if syncvolume or @('services.solr.enabled') or @('services.bitwarden.enabled') %}
 volumes:
 {% if syncvolume %}
 {% if bool(@('mutagen')) %}
@@ -36,4 +36,13 @@ volumes:
 {% if @('services.solr.enabled') %}
   solr_data:
 {% endif %}
+{% if @('services.bitwarden.enabled') %}
+  secrets-data:
+{% endif %}
+{% endif %}
+
+{% if @('services.bitwarden.enabled') %}
+secrets:
+  bws_access_token:
+    environment: BWS_ACCESS_TOKEN
 {% endif %}

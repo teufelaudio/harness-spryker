@@ -8,12 +8,12 @@ BWS_VERSION="2.0.0"
 
 read_token() {
   # Check if BWS_ACCESS_TOKEN is set and not empty
-  if [ -z "$BWS_ACCESS_TOKEN" ]; then
+  if [ -z "${BWS_ACCESS_TOKEN:-}" ]; then
     printf "Please enter Bitwarden Secrets token: " >&2
     read -r BWS_ACCESS_TOKEN
 
     # Verify it's not still empty after input
-    if [ -z "$BWS_ACCESS_TOKEN" ]; then
+    if [ -z "${BWS_ACCESS_TOKEN:-}" ]; then
       echo "Error: BWS_ACCESS_TOKEN cannot be empty. Exiting." >&2
       exit 1
     fi
@@ -28,6 +28,16 @@ setup_bws_tool() {
     OS=$(uname -s | tr '[:upper:]' '[:lower:]')
     ARCH=$(uname -m)
 
+    # Determine installation path based on OS
+    if [ "$OS" = "darwin" ]; then
+      # macOS - use user-writable path
+      BIN_DIR="$HOME/.local/bin"
+      mkdir -p "$BIN_DIR"
+    else
+      # Linux (containers) - use system path
+      BIN_DIR="/usr/local/bin"
+    fi
+
     # Determine the target triple based on OS and architecture
     if [ "$OS" = "darwin" ]; then
       # macOS
@@ -38,7 +48,7 @@ setup_bws_tool() {
       fi
       # Install dependencies for macOS (if needed)
       if ! command -v curl >/dev/null || ! command -v unzip >/dev/null; then
-        echo "Error: curl and unzip are required. Please install them first."
+        echo "Error: curl and unzip are required. Please install them first." >&2
         exit 1
       fi
     else
@@ -54,11 +64,19 @@ setup_bws_tool() {
       fi
     fi
 
-    echo "Downloading bws for ${OS}/${ARCH} (${BWS_ARCH})..."
+    echo "Downloading bws for ${OS}/${ARCH} (${BWS_ARCH})..." >&2
     curl -L "https://github.com/bitwarden/sdk-sm/releases/download/bws-v${BWS_VERSION}/bws-${BWS_ARCH}-${BWS_VERSION}.zip" -o /tmp/bws.zip
-    unzip -o /tmp/bws.zip -d /usr/local/bin/
-    chmod +x /usr/local/bin/bws
-    echo "bws installed successfully."
+    unzip -o /tmp/bws.zip -d "$BIN_DIR/"
+    chmod +x "$BIN_DIR/bws"
+    echo "bws installed successfully to $BIN_DIR/bws" >&2
+
+    # Add helpful message for macOS users if ~/.local/bin is not in PATH
+    if [ "$OS" = "darwin" ]; then
+      if ! echo "$PATH" | grep -q "$BIN_DIR"; then
+        echo "NOTE: Add $BIN_DIR to your PATH by adding this line to your ~/.zshrc:" >&2
+        echo "  export PATH=\"\$HOME/.local/bin:\$PATH\"" >&2
+      fi
+    fi
   fi
 }
 
@@ -182,4 +200,3 @@ main() {
 
 # Execute main with all arguments
 main "$@"
-

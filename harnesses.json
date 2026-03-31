@@ -77,8 +77,8 @@
     },
     "v1.10.1": {
       "type": "tar.gz",
-      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/WEBDEV-11030-fix-permission-issue.tar.gz",
-      "date": "2026-03-27"
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.10.1.tar.gz",
+      "date": "2026-03-31"
     }
   }
 }

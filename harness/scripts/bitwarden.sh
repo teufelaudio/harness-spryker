@@ -10,7 +10,7 @@ read_token() {
   # Check if BWS_ACCESS_TOKEN is set and not empty
   if [ -z "${BWS_ACCESS_TOKEN:-}" ]; then
     printf "Please enter Bitwarden Secrets token: " >&2
-    read -r BWS_ACCESS_TOKEN
+    read -r -s BWS_ACCESS_TOKEN
 
     # Verify it's not still empty after input
     if [ -z "${BWS_ACCESS_TOKEN:-}" ]; then

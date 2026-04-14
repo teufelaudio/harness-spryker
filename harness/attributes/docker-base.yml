@@ -53,9 +53,6 @@ attributes:
         DB_ADMIN_USER: root
         HAS_ELASTICSEARCH: "= @('services.elasticsearch.enabled') ? 'true' : 'false'"
         HAS_VARNISH: "= @('services.varnish.enabled') ? 'true' : 'false'"
-      environment_secrets:
-        DB_ADMIN_PASS: = @('database.root_pass')
-        ADMIN_DEFAULT_PASSWORD: admin123
       resources:
         memory: "2048Mi"
         init_memory: "1024Mi"

@@ -6,6 +6,7 @@ command('external-images pull [<service>]'):
     SERVICE: = input.argument('service')
     BITWARDEN_ENABLED: = boolToString(@('services.bitwarden.enabled'))
     BWS_PROJECT_ID: =@('bitwarden.project_id')
+    BWS_SERVER_URL: =@('bitwarden.server_url')
   exec: |
     #!bash(workspace:/)|@
     CONF_ARGS=()
@@ -19,7 +20,7 @@ command('external-images pull [<service>]'):
     
     DOCKER_REGISTRY_PASSWORD="@('docker.registry.password')"
     if [ "$BITWARDEN_ENABLED" = yes ]; then
-      DOCKER_REGISTRY_PASSWORD="$(./.my127ws/harness/scripts/bitwarden.sh download-secret $BWS_PROJECT_ID DOCKER_REGISTRY_PASSWORD)"
+      DOCKER_REGISTRY_PASSWORD="$(./.my127ws/harness/scripts/bitwarden.sh download-secret $BWS_SERVER_URL $BWS_PROJECT_ID DOCKER_REGISTRY_PASSWORD)"
     fi
     
     echo $DOCKER_REGISTRY_PASSWORD | run docker login --username='@('docker.registry.username')' --password-stdin '@('docker.registry.url')'

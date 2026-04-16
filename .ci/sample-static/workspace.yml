@@ -13,3 +13,4 @@ attribute('aws.secret_access_key'): null
 
 attribute('services.bitwarden.enabled'): true
 attribute('bitwarden.project_id'): 1
+attribute('bitwarden.server_url'): https://bitwarden.example.com

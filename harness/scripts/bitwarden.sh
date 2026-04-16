@@ -81,9 +81,10 @@ setup_bws_tool() {
 }
 
 fetch_all_secrets_as_env() {
-  local project_id="$1"
-  local token="$2"
-  bws secret list "$project_id" --access-token "$token" -o env
+  local server_url="$1"
+  local project_id="$2"
+  local token="$3"
+  bws secret list "$project_id" --server-url "$server_url" --access-token "$token" -o env
 }
 
 find_secret_line_by_name() {
@@ -100,8 +101,9 @@ remove_surrounding_quotes() {
 }
 
 download_secret() {
-  local project_id="$1"
-  local secret_name="$2"
+  local server_url="$1"
+  local project_id="$2"
+  local secret_name="$3"
 
   if [ -z "$project_id" ]; then
     echo "Error: project_id is required" >&2
@@ -117,7 +119,7 @@ download_secret() {
 
   echo "Fetching secret: ${secret_name}..." >&2
 
-  local all_secrets="$(fetch_all_secrets_as_env "$project_id" "$token")"
+  local all_secrets="$(fetch_all_secrets_as_env "$server_url" "$project_id" "$token")"
   local secret_line=$(echo "$all_secrets" | find_secret_line_by_name "$secret_name")
 
   if [ -z "$secret_line" ]; then
@@ -131,8 +133,9 @@ download_secret() {
 }
 
 download_all_secrets() {
-  local project_id="$1"
-  local output_file="$2"
+  local server_url="$1"
+  local project_id="$2"
+  local output_file="$3"
 
   if [ -z "$project_id" ]; then
     echo "Error: project_id is required" >&2
@@ -147,7 +150,7 @@ download_all_secrets() {
   setup_bws_tool >&2
 
   echo "Fetching all secrets for project: ${project_id}..." >&2
-  fetch_all_secrets_as_env "$project_id" "$token" > "$output_file"
+  fetch_all_secrets_as_env "$server_url" "$project_id" "$token" > "$output_file"
 
   # Verify that the output file has at least one line with actual content
   if [ ! -s "$output_file" ] || ! grep -q '[^[:space:]]' "$output_file" 2>/dev/null; then
@@ -168,28 +171,28 @@ main() {
       read_token
       ;;
     download-secret)
-      if [ -z "$1" ] || [ -z "$2" ]; then
-        echo "Usage: $0 download-secret <project_id> <secret_name>"
-        echo "Example: $0 download-secret xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx MY_API_KEY"
+      if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+        echo "Usage: $0 download-secret <server_url> <project_id> <secret_name>"
+        echo "Example: $0 download-secret https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx MY_API_KEY"
         exit 1
       fi
-      download_secret "$1" "$2"
+      download_secret "$1" "$2" "$3"
       ;;
     download-all-secrets)
-      if [ -z "$1" ] || [ -z "$2" ]; then
-        echo "Usage: $0 download-all-secrets <project_id> <output_file>"
-        echo "Example: $0 download-all-secrets xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx /secrets/.env_secrets"
+      if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+        echo "Usage: $0 download-all-secrets <server_url> <project_id> <output_file>"
+        echo "Example: $0 download-all-secrets https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx /secrets/.env_secrets"
         exit 1
       fi
-      download_all_secrets "$1" "$2"
+      download_all_secrets "$1" "$2" "$3"
       ;;
     *)
       echo "Usage: $0 <command> [arguments]"
       echo ""
       echo "Commands:"
       echo "  read-token                               Prompt for and return the Bitwarden Secrets token"
-      echo "  download-secret <project_id> <secret_name>       Download a specific secret by name"
-      echo "  download-all-secrets <project_id> <output_file>  Download all secrets from a project to a file"
+      echo "  download-secret <server_url> <project_id> <secret_name>       Download a specific secret by name"
+      echo "  download-all-secrets <server_url> <project_id> <output_file>  Download all secrets from a project to a file"
       echo ""
       echo "Environment Variables:"
       echo "  BWS_ACCESS_TOKEN - Bitwarden Secrets Manager access token (will prompt if not set)"

@@ -8,6 +8,7 @@ command('app deploy <environment>'):
     HELM_VALUES_PREFIX: = @('workspace.name')
     BITWARDEN_ENABLED:  = boolToString(@('services.bitwarden.enabled'))
     BWS_PROJECT_ID:     = @('bitwarden.project_id')
+    BWS_SERVER_URL:     = @('bitwarden.server_url')
   exec: |
     #!bash(harness:/helm)|=
     set -o pipefail
@@ -30,7 +31,7 @@ command('app deploy <environment>'):
     
     DOCKER_IMAGE_PULL_CONFIG="@('docker.image_pull_config')"
     if [ "$BITWARDEN_ENABLED" = yes ]; then
-      DOCKER_IMAGE_PULL_CONFIG="$(../../harness/scripts/bitwarden.sh download-secret $BWS_PROJECT_ID DOCKER_IMAGE_PULL_CONFIG)"
+      DOCKER_IMAGE_PULL_CONFIG="$(../../harness/scripts/bitwarden.sh download-secret $BWS_SERVER_URL $BWS_PROJECT_ID DOCKER_IMAGE_PULL_CONFIG)"
     fi
     
     (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)

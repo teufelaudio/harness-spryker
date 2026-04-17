@@ -72,8 +72,23 @@
     },
     "v1.10.0": {
       "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.10.0.tar.gz",
+      "date": "2026-03-25"
+    },
+    "v1.10.1": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.10.1.tar.gz",
+      "date": "2026-03-31"
+    },
+    "v1.10.2": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/1.10.2.tar.gz",
+      "date": "2026-04-16"
+    },
+    "v1.11.0": {
+      "type": "tar.gz",
       "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/WEBDEV-11025-bitwarden-secret-manager-for-k8s.tar.gz",
-      "date": "2026-03-23"
+      "date": "2026-04-17"
     }
   }
 }

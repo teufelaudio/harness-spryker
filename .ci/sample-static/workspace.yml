@@ -16,3 +16,4 @@ attribute('bitwarden'):
   project_id: proj_1
   organization_id: org_1
   token: ~
+  server_url: https://bitwarden.example.com

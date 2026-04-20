@@ -52,6 +52,7 @@ attributes:
     rabbitmq:
       environment:
         RABBITMQ_DEFAULT_USER: spryker
+        RABBITMQ_DEFAULT_PASS: spryker
     redis:
       image: redis:5-alpine
 

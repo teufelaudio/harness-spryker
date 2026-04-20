@@ -31,7 +31,11 @@ attributes:
           environment:
             FEATURE_ENABLE_ALL_STORES: no
             AMAZONPAY_USE_TEST_CLIENT: no
+            RABBITMQ_PASSWORD: = @('pipeline.base.services.rabbitmq.environment_secrets.RABBITMQ_DEFAULT_PASS')
         rabbitmq:
+          environment:
+            RABBITMQ_DEFAULT_PASS: = @('rabbitmq.password')
+            RABBITMQ_ERLANG_COOKIE: = @('rabbitmq.erlang_cookie')
           resources:
             memory: 1024Mi
         elasticsearch:

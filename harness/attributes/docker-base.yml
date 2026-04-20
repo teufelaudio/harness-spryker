@@ -141,6 +141,10 @@ attributes:
         POSTGRES_PASSWORD_FILE: /postgres/secrets/POSTGRES_PASSWORD
       resources:
         memory: "512Mi"
+      bitwarden:
+        onlyMappedSecrets: true
+        map:
+          POSTGRES_PASSWORD: ~
     rabbitmq:
       enabled: "= 'rabbitmq' in @('app.services')"
       image: = @('rabbitmq.image') ~ ':' ~ @('rabbitmq.tag')

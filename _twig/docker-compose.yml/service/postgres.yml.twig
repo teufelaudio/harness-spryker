@@ -16,3 +16,8 @@
     ports:
       - "127.0.0.1:{{ @('database.port_forward') ? @('database.port_forward') : '0' }}:5432"
 {% endif %}
+{% if @('services.bitwarden.enabled') %}
+    depends_on:
+      bitwarden-init:
+        condition: service_completed_successfully
+{% endif %}

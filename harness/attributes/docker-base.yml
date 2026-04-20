@@ -31,8 +31,6 @@ attributes:
         TIDEWAYS_HOST: tideways
         VARNISH_HOSTNAME_TEMPLATE: "varnish-%d.varnish-headless"
       environment_secrets:
-        DB_PASS: = @('database.pass')
-        RABBITMQ_PASSWORD: = @('rabbitmq.password')
         TIDEWAYS_APIKEY: ""
     nginx:
       image: = @('docker.repository') ~ ':' ~ @('app.version') ~ '-nginx'

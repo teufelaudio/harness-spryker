@@ -73,8 +73,15 @@ spec:
 spec:
   organizationId: {{ .root.Values.bitwarden.organization_id }}
   secretName: {{ .root.Values.resourcePrefix }}{{ .service_name }}
-  onlyMappedSecrets: false
-  useSecretNames: true
+  onlyMappedSecrets: {{ (.service.bitwarden).onlyMappedSecrets | default false }}
+  useSecretNames: {{ not (.service.bitwarden).onlyMappedSecrets }}
+{{ if (.service.bitwarden).onlyMappedSecrets }}
+  map:
+    {{- range $key, $value := (.service.bitwarden).map }}
+    - bwSecretId: {{ $value }}
+      secretKeyName: {{ $key }}
+    {{ end }}
+{{ end }}
   authToken:
     secretName: {{ .root.Values.resourcePrefix }}bitwarden-auth-token
     secretKey: token

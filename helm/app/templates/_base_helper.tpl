@@ -39,7 +39,7 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{- define "service.environment.secret" }}
-{{ if and .service.environment_secrets (.service.enabled | default true) }}
+{{ if and (or .service.environment_secrets (.service.bitwarden).enabled) (.service.enabled | default true) }}
 {{ if .root.Values.feature.sealed_secrets }}
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret

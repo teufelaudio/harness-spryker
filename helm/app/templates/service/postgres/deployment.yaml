@@ -32,7 +32,7 @@ spec:
         - name: {{ $key | quote }}
           value: {{ $value | quote }}
         {{- end }}
-        {{- if .environment_secrets }}
+        {{- if or .environment_secrets (.bitwarden).enabled }}
         envFrom:
           - secretRef:
               name: {{ $.Values.resourcePrefix }}postgres

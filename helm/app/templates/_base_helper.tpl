@@ -39,10 +39,13 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{- define "service.environment.secret" }}
-{{ if and .service.environment_secrets (.service.enabled | default true) }}
+{{ if and (or .service.environment_secrets (.service.bitwarden).enabled) (.service.enabled | default true) }}
 {{ if .root.Values.feature.sealed_secrets }}
 apiVersion: bitnami.com/v1alpha1
 kind: SealedSecret
+{{ else if .root.Values.services.bitwarden.enabled }}
+apiVersion: k8s.bitwarden.com/v1
+kind: BitwardenSecret
 {{ else }}
 apiVersion: v1
 kind: Secret
@@ -66,6 +69,22 @@ spec:
       labels:
         {{- include "chart.labels" .root | nindent 8 }}
         app.kubernetes.io/component: {{ .component | default .service_name }}
+{{ else if .root.Values.services.bitwarden.enabled }}
+spec:
+  organizationId: {{ .root.Values.bitwarden.organization_id }}
+  secretName: {{ .root.Values.resourcePrefix }}{{ .service_name }}
+  onlyMappedSecrets: {{ (.service.bitwarden).onlyMappedSecrets | default false }}
+  useSecretNames: {{ not (.service.bitwarden).onlyMappedSecrets }}
+{{ if (.service.bitwarden).onlyMappedSecrets }}
+  map:
+    {{- range $key, $value := (.service.bitwarden).map }}
+    - bwSecretId: {{ $value }}
+      secretKeyName: {{ $key }}
+    {{ end }}
+{{ end }}
+  authToken:
+    secretName: {{ .root.Values.resourcePrefix }}bitwarden-auth-token
+    secretKey: token
 {{ else }}
 stringData:
 {{ index .service.environment_secrets | toYaml | nindent 2 -}}

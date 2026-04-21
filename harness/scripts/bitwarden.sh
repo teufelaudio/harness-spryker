@@ -132,6 +132,28 @@ download_secret() {
   echo "$secret_value"
 }
 
+download_secret_by_id() {
+  local server_url="$1"
+  local project_id="$2"
+  local secret_id="$3"
+
+  if [ -z "$project_id" ]; then
+    echo "Error: project_id is required" >&2
+    exit 1
+  fi
+  if [ -z "$secret_id" ]; then
+    echo "Error: secret_id is required" >&2
+    exit 1
+  fi
+
+  local token="$(read_token)"
+  setup_bws_tool >&2
+
+  echo "Fetching secret by ID: ${secret_id}..." >&2
+
+  bws secret get "$secret_id" --server-url "$server_url" --access-token "$token" -o env | extract_value_after_equals | remove_surrounding_quotes
+}
+
 download_all_secrets() {
   local server_url="$1"
   local project_id="$2"
@@ -177,6 +199,14 @@ main() {
         exit 1
       fi
       download_secret "$1" "$2" "$3"
+      ;;
+    download-secret-by-id)
+      if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
+        echo "Usage: $0 download-secret-by-id <server_url> <project_id> <secret_id>"
+        echo "Example: $0 download-secret-by-id https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 123e4567-e89b-12d3-a456-426614174000"
+        exit 1
+      fi
+      download_secret_by_id "$1" "$2" "$3"
       ;;
     download-all-secrets)
       if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then

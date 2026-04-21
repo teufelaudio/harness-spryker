@@ -30,9 +30,8 @@ attributes:
         PHP_IDE_CONFIG: "serverName=workspace"
         TIDEWAYS_HOST: tideways
         VARNISH_HOSTNAME_TEMPLATE: "varnish-%d.varnish-headless"
-      environment_secrets:
-        DB_PASS: = @('database.pass')
         RABBITMQ_PASSWORD: = @('rabbitmq.password')
+      environment_secrets:
         TIDEWAYS_APIKEY: ""
     nginx:
       image: = @('docker.repository') ~ ':' ~ @('app.version') ~ '-nginx'
@@ -139,9 +138,13 @@ attributes:
         POSTGRES_USER: = @('database.user')
         PGDATA: /var/lib/postgresql/data/pgdata
       environment_secrets:
-        POSTGRES_PASSWORD: = @('database.pass')
+        POSTGRES_PASSWORD_FILE: /postgres/secrets/POSTGRES_PASSWORD
       resources:
         memory: "512Mi"
+      bitwarden:
+        onlyMappedSecrets: true
+        map:
+          POSTGRES_PASSWORD: ~
     rabbitmq:
       enabled: "= 'rabbitmq' in @('app.services')"
       image: = @('rabbitmq.image') ~ ':' ~ @('rabbitmq.tag')
@@ -150,7 +153,6 @@ attributes:
         RABBITMQ_DEFAULT_USER: = @('rabbitmq.user')
         RABBITMQ_DEFAULT_VHOST: = @('rabbitmq.vhosts.default')
         RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS: "-rabbitmq_management load_definitions '/etc/rabbitmq/definitions.json'"
-      environment_secrets:
         RABBITMQ_DEFAULT_PASS: = @('rabbitmq.password')
         RABBITMQ_ERLANG_COOKIE: = @('rabbitmq.erlang_cookie')
       resources:

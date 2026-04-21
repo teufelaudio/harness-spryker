@@ -56,7 +56,7 @@ spec:
           value: {{ $value | quote }}
         {{- end }}
         {{- end }}
-        {{- if .environment_secrets }}
+        {{- if or .environment_secrets (.bitwarden).enabled }}
         envFrom:
           - secretRef:
               name: {{ $.Values.resourcePrefix }}cron

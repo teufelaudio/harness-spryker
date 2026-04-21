@@ -4,6 +4,7 @@
       - traefik.enable=false
     volumes:
       - ./.my127ws/docker/image/postgres/root/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - postgres-secrets:/postgres/secrets
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.postgres.environment'),
         @('services.postgres.environment_dynamic'),
@@ -14,4 +15,9 @@
 {% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}
     ports:
       - "127.0.0.1:{{ @('database.port_forward') ? @('database.port_forward') : '0' }}:5432"
+{% endif %}
+{% if @('services.bitwarden.enabled') %}
+    depends_on:
+      bitwarden-init:
+        condition: service_completed_successfully
 {% endif %}

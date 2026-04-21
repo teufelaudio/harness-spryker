@@ -31,16 +31,9 @@ attributes:
           environment:
             FEATURE_ENABLE_ALL_STORES: no
             AMAZONPAY_USE_TEST_CLIENT: no
-          environment_secrets:
-            DB_PASS: = @('pipeline.base.services.postgres.environment_secrets.POSTGRES_PASSWORD')
-            RABBITMQ_PASSWORD: = @('pipeline.base.services.rabbitmq.environment_secrets.RABBITMQ_DEFAULT_PASS')
-            SPRYKER_SALT: = @('spryker.salt')
-            SPRYKER_ZED_REQUEST_TOKEN: = @('spryker.zed_request_token')
-        postgres:
-          environment_secrets:
-            POSTGRES_PASSWORD: = @('database.pass')
+            RABBITMQ_PASSWORD: = @('pipeline.base.services.rabbitmq.environment.RABBITMQ_DEFAULT_PASS')
         rabbitmq:
-          environment_secrets:
+          environment:
             RABBITMQ_DEFAULT_PASS: = @('rabbitmq.password')
             RABBITMQ_ERLANG_COOKIE: = @('rabbitmq.erlang_cookie')
           resources:

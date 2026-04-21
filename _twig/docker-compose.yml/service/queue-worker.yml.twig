@@ -25,9 +25,6 @@
       ])), 2, 6) | raw }}
     networks:
       - private
-    labels:
-      # deprecated, a later workspace release will disable by default
-      - traefik.enable=false
     depends_on:
       console:
         condition: service_started

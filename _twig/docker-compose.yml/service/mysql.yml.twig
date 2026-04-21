@@ -4,9 +4,6 @@
   | reduce((carry, v) => carry|merge([v]), []) %}
   mysql:
     image: {{ @('services.mysql.image') }}
-    labels:
-      # deprecated, a later workspace release will disable by default
-      - traefik.enable=false
     command: {{ to_nice_yaml(command, 2, 6) }}
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.mysql.environment'),

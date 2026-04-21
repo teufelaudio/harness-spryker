@@ -1,7 +1,5 @@
   elasticsearch:
     image: {{ @('elasticsearch.image') ~':' ~ @('elasticsearch.tag') }}
-    labels:
-      - traefik.enable=false
     environment:
       ES_JAVA_OPTS: "-Xmx512m -Xms512m"
       discovery.type: "single-node"

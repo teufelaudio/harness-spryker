@@ -158,6 +158,7 @@ attributes:
     chrome:
       image: = 'yukinying/chrome-headless-browser-stable:125.0.6422.141'
     redis:
+      enabled: "= 'redis' in @('app.services')"
       image: redis:6-alpine
       options:
         # Handle many smaller keys
@@ -175,6 +176,7 @@ attributes:
         # 1.5 * maxmemory to allow copy on write snapshots
         memory: "1.5Gi"
     redis-session:
+      enabled: "= 'redis-session' in @('app.services')"
       image: redis:6-alpine
       options:
         # Handle many smaller keys
@@ -188,6 +190,13 @@ attributes:
           - 3600 1
           - 300 100
           - 60 10000
+      resources:
+        # 1.5 * maxmemory to allow copy on write snapshots
+        memory: "1.5Gi"
+    valkey:
+      enabled: "= 'valkey' in @('app.services')"
+      image: valkey/valkey:9-alpine
+      max_memory: 1GB
       resources:
         # 1.5 * maxmemory to allow copy on write snapshots
         memory: "1.5Gi"

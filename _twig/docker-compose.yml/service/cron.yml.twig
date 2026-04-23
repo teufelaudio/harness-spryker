@@ -26,9 +26,6 @@
       ])), 2, 6) | raw }}
     networks:
       - private
-    labels:
-      # deprecated, a later workspace release will disable by default
-      - traefik.enable=false
 {% if @('services.bitwarden.enabled') %}
     depends_on:
       bitwarden-init:

@@ -11,10 +11,9 @@
         @('services.solr.environment_secrets')
       ])), 2, 6) | raw }}
     labels:
-      - traefik.backend=solr-{{ @('workspace.name') }}
-      - traefik.frontend.rule=Host:solr-{{ @('hostname') }}
-      - traefik.docker.network=my127ws
-      - traefik.port=8983
+      - traefik.enable=true
+      - traefik.http.routers.solr-{{ @('workspace.name') }}.rule=Host(`solr-{{ @('hostname') }}`)
+      - traefik.http.services.solr-{{ @('workspace.name') }}.loadbalancer.server.port=8983
     volumes:
       - solr_data:{{ @('services.solr.environment.SOLR_VOLUME_DIR') }}
     networks:

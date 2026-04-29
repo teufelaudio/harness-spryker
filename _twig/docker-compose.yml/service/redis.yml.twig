@@ -2,8 +2,6 @@
     image: {{ @('services.redis.image')  }}
     # evict any least recently used key even if they don't have a TTL
     command: redis-server --maxmemory {{ @('redis.max_memory') }} --maxmemory-policy allkeys-lru --save 3600 1 --save 300 100 --save 60 10000
-    labels:
-      - traefik.enable=false
     networks:
       - private
 {% if @('app.build') != 'static' and @('docker.port_forward.enabled') %}

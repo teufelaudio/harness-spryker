@@ -1,8 +1,5 @@
   tideways:
     image: {{ @('services.tideways.image') }}
-    labels:
-      # deprecated, a later workspace release will disable by default
-      - traefik.enable=false
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.tideways.environment'),
         @('services.tideways.environment_dynamic'),

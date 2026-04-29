@@ -22,9 +22,6 @@
       - secrets-data:/secrets:ro
 {% endif %}
 {% endif %}
-    labels:
-      # deprecated, a later workspace release will disable by default
-      - traefik.enable=false
     networks:
       - private
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([

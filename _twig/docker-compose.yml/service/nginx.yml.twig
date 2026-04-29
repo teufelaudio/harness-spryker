@@ -4,6 +4,7 @@
 {% endif %}
 {% set hostnames = [@('hostname')] %}
 {% set hostnames = hostnames|merge(@('hostname_aliases')|filter(v => v is not empty)|map(alias => "#{alias}." ~ @('domain'))) %}
+{% set traefikRules = hostnames|map(hostname => "Host(`" ~ hostname ~ "`)") %}
 
   nginx:
     build: .my127ws/docker/image/nginx
@@ -14,14 +15,14 @@
     image: {{ @('services.nginx.image') }}
 {% endif %}
     labels:
-{% if @('services.varnish.enabled') %}
-      - traefik.enable=false
-{% else %}
-      - traefik.backend={{ @('workspace.name') }}
-      - traefik.frontend.rule=Host:{{ hostnames|join(',') }}
-      - traefik.frontend.redirect.entryPoint=https
-      - traefik.docker.network=my127ws
-      - traefik.port=80
+{% if not @('services.varnish.enabled') %}
+      - traefik.enable=true
+      - traefik.http.routers.{{ @('workspace.name') }}-nginx.rule={{ traefikRules | join(' || ') }}
+      - traefik.http.services.{{ @('workspace.name') }}-nginx.loadbalancer.server.port=80
+      - traefik.http.routers.{{ @('workspace.name') }}-nginx.entrypoints=http,https
+      - traefik.http.routers.{{ @('workspace.name') }}-nginx.middlewares=redirect-https
+      - traefik.http.middlewares.redirect-https.redirectscheme.scheme=https
+      - traefik.http.middlewares.redirect-https.redirectscheme.permanent=true
 {% endif %}
     environment: {{ to_nice_yaml(docker_compose_escape(deep_merge([
         @('services.nginx.environment'),

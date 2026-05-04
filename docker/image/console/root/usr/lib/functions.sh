@@ -2,6 +2,8 @@
 
 function db_hasSchema()
 {
+    local DB_PASS=$(fetch_db_pass)
+
     if [ "${DB_PLATFORM}" == "mysql" ]; then
         SQL="SELECT IF (COUNT(*) = 0, 'no', 'yes') FROM information_schema.tables WHERE table_schema = '$DB_NAME';"
         IS_DATABASE_APPLIED="$(mysql -ss -h "$DB_HOST" -u "$DB_USER" -p"$DB_PASS" -e "$SQL")"
@@ -18,4 +20,13 @@ function db_hasSchema()
     fi
 
     return 0
+}
+
+function fetch_db_pass()
+{
+    if [ -n "${DB_PASS}" ]; then
+        echo "${DB_PASS}"
+    else
+        grep '^DB_PASS=' /secrets/.env_secrets | cut -d'=' -f2- | sed 's/^"\(.*\)"$/\1/' || true
+    fi
 }

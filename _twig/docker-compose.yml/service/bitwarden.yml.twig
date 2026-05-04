@@ -13,8 +13,20 @@
           exit 0
         fi
         BWS_ACCESS_TOKEN="$$(cat /run/secrets/bws_access_token)" /bitwarden.sh download-all-secrets "$$BWS_SERVER_URL" "$$BWS_PROJECT_ID" /secrets/.env_secrets
+{% for service_name, service in @('services') %}
+{% if service.bitwarden is defined and service.bitwarden.onlyMappedSecrets %}
+{% for secret_key, secret_id in service.bitwarden.map %}
+        BWS_ACCESS_TOKEN="$$(cat /run/secrets/bws_access_token)" /bitwarden.sh download-secret-by-id "$$BWS_SERVER_URL" "$$BWS_PROJECT_ID" {{ secret_id }} > /{{ service_name }}/secrets/{{ secret_key }}
+{% endfor %}
+{% endif %}
+{% endfor %}
     volumes:
       - secrets-data:/secrets
+{% for service_name, service in @('services') %}
+{% if service.bitwarden is defined and service.bitwarden.onlyMappedSecrets %}
+      - {{ service_name }}-secrets:/{{ service_name }}/secrets
+{% endif %}
+{% endfor %}
       - .my127ws/harness/scripts/bitwarden.sh:/bitwarden.sh:ro
     secrets:
       - bws_access_token

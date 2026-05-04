@@ -26,3 +26,5 @@ sealed_secrets:
   scope: {{ @('helm.sealed_secrets.scope') | json_encode | raw }}
 
 istio: {{ to_nice_yaml(@('pipeline.base.istio'), 2, 2) | raw }}
+
+bitwarden: {{ to_nice_yaml(@('bitwarden'), 2, 2) | raw }}

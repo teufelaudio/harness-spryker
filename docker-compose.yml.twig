@@ -38,6 +38,11 @@ volumes:
 {% endif %}
 {% if @('services.bitwarden.enabled') %}
   secrets-data:
+{% for service_name, service in @('services') %}
+{% if service.bitwarden is defined and service.bitwarden.onlyMappedSecrets %}
+  {{ service_name }}-secrets:
+{% endif %}
+{% endfor %}
 {% endif %}
 {% endif %}
 

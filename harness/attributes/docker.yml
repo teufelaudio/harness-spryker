@@ -18,12 +18,9 @@ attributes:
           template_key_value('ZED_API_HOST_{{key}}', @('zed_api.external_hosts'))
         ])"
       environment_secrets:
-        SPRYKER_SALT: = @('spryker.salt')
         SPRYKER_OAUTH_CLIENT_IDENTIFIER: "frontend"
         # not required for development env, must be set for remote (recommended size: 48)
         SPRYKER_OAUTH_CLIENT_SECRET: = @('spryker.oauth_client_secret')
-        # not required for development env, must be set for remote (recommended size: 80)
-        SPRYKER_ZED_REQUEST_TOKEN: = @('spryker.zed_request_token')
     console:
       build:
         environment:
@@ -55,7 +52,6 @@ attributes:
     rabbitmq:
       environment:
         RABBITMQ_DEFAULT_USER: spryker
-      environment_secrets:
         RABBITMQ_DEFAULT_PASS: spryker
     redis:
       image: redis:5-alpine

@@ -1,14 +1,19 @@
 # Reason why this command is override: https://github.com/inviqa/harness-base-php/pull/713
 command('app deploy <environment>'):
   env:
-    ENVIRONMENT: = input.argument('environment')
-    NAMESPACE:   = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
-    CLUSTER:     = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
-    TIMEOUT:     = @('helm.timeout')
+    ENVIRONMENT:        = input.argument('environment')
+    NAMESPACE:          = @('pipeline.' ~ input.argument('environment') ~ '.namespace')
+    CLUSTER:            = @('pipeline.' ~ input.argument('environment') ~ '.cluster.name')
+    TIMEOUT:            = @('helm.timeout')
+    HELM_VALUES_PREFIX: = @('workspace.name')
+    BITWARDEN_ENABLED:  = boolToString(@('services.bitwarden.enabled'))
+    BWS_PROJECT_ID:     = @('bitwarden.project_id')
+    BWS_SERVER_URL:     = @('bitwarden.server_url')
   exec: |
     #!bash(harness:/helm)|=
     set -o pipefail
     cd "${ENVIRONMENT}"
+    
     cat <<EOF
     ==================================================
     HINT: in case this failed, it might be due to no space left on the disk. 
@@ -23,9 +28,15 @@ command('app deploy <environment>'):
     # Second removing the namespace using kubectl
     kubectl delete ns lautsprecher-teufel-pr-NUMBER
     EOF
+    
+    DOCKER_IMAGE_PULL_CONFIG="@('docker.image_pull_config')"
+    if [ "$BITWARDEN_ENABLED" = yes ]; then
+      DOCKER_IMAGE_PULL_CONFIG="$(../../harness/scripts/bitwarden.sh download-secret $BWS_SERVER_URL $BWS_PROJECT_ID DOCKER_IMAGE_PULL_CONFIG)"
+    fi
+    
     (umask 0077 && doctl -t "$DO_ACCESS_TOKEN" kubernetes cluster kubeconfig show "$CLUSTER" > kubectl.config.yaml)
-    passthru helm --debug dependency build
-    passthru helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" "${NAMESPACE}" ./
+    helm --debug dependency build
+    helm --kubeconfig="${PWD}/kubectl.config.yaml" upgrade --wait --atomic --create-namespace --install --timeout "${TIMEOUT}" --namespace "${NAMESPACE}" --set "${HELM_VALUES_PREFIX}.bitwarden.token=${BWS_ACCESS_TOKEN}" --set "${HELM_VALUES_PREFIX}.docker.image_pull_config=${DOCKER_IMAGE_PULL_CONFIG}" "${NAMESPACE}" ./
     if [[ "$ENVIRONMENT" != "qa" ]]; then
       export KUBECONFIG="${PWD}/kubectl.config.yaml"
       (cd ../../../ && tools/scripts/run_feature_env.sh "$NAMESPACE")

@@ -203,7 +203,7 @@ main() {
     download-secret-by-id)
       if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
         echo "Usage: $0 download-secret-by-id <server_url> <project_id> <secret_id>"
-        echo "Example: $0 download-secret-by-id https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx 123e4567-e89b-12d3-a456-426614174000"
+        echo "Example: $0 download-secret-by-id https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
         exit 1
       fi
       download_secret_by_id "$1" "$2" "$3"

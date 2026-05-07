@@ -94,6 +94,11 @@
       "type": "tar.gz",
       "url": "https://github.com/teufelaudio/harness-spryker/archive/1.12.0.tar.gz",
       "date": "2026-05-04"
+    },
+    "v1.13.0": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/WEBDEV-11032-metaways-bitwarden-secrets.tar.gz",
+      "date": "2026-05-07"
     }
   }
 }

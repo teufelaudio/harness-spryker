@@ -2,7 +2,6 @@
 
 set -o errexit
 set -o nounset
-set -o pipefail
 
 BWS_VERSION="2.0.0"
 
@@ -158,6 +157,7 @@ download_all_secrets() {
   local server_url="$1"
   local project_id="$2"
   local output_file="$3"
+  local append_mode="${4:-false}"
 
   if [ -z "$project_id" ]; then
     echo "Error: project_id is required" >&2
@@ -172,7 +172,11 @@ download_all_secrets() {
   setup_bws_tool >&2
 
   echo "Fetching all secrets for project: ${project_id}..." >&2
-  fetch_all_secrets_as_env "$server_url" "$project_id" "$token" > "$output_file"
+  if [ "$append_mode" = "true" ]; then
+    fetch_all_secrets_as_env "$server_url" "$project_id" "$token" >> "$output_file"
+  else
+    fetch_all_secrets_as_env "$server_url" "$project_id" "$token" > "$output_file"
+  fi
 
   # Verify that the output file has at least one line with actual content
   if [ ! -s "$output_file" ] || ! grep -q '[^[:space:]]' "$output_file" 2>/dev/null; then
@@ -210,11 +214,12 @@ main() {
       ;;
     download-all-secrets)
       if [ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ]; then
-        echo "Usage: $0 download-all-secrets <server_url> <project_id> <output_file>"
+        echo "Usage: $0 download-all-secrets <server_url> <project_id> <output_file> [append_mode]"
         echo "Example: $0 download-all-secrets https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx /secrets/.env_secrets"
+        echo "Example: $0 download-all-secrets https://vault.teufelhome.com xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx /secrets/.env_secrets true"
         exit 1
       fi
-      download_all_secrets "$1" "$2" "$3"
+      download_all_secrets "$1" "$2" "$3" "${4:-false}"
       ;;
     *)
       echo "Usage: $0 <command> [arguments]"
@@ -222,7 +227,7 @@ main() {
       echo "Commands:"
       echo "  read-token                               Prompt for and return the Bitwarden Secrets token"
       echo "  download-secret <server_url> <project_id> <secret_name>       Download a specific secret by name"
-      echo "  download-all-secrets <server_url> <project_id> <output_file>  Download all secrets from a project to a file"
+      echo "  download-all-secrets <server_url> <project_id> <output_file> [append_mode]  Download all secrets from a project to a file (append_mode: true|false, default: false)"
       echo ""
       echo "Environment Variables:"
       echo "  BWS_ACCESS_TOKEN - Bitwarden Secrets Manager access token (will prompt if not set)"

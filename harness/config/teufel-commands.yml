@@ -70,6 +70,33 @@ command('prepare metaways config'): |
   }
   copy($config, ".env");
 
+command('prepare metaways secrets %'):
+  env:
+    BITWARDEN_ENABLED: = boolToString(@('services.bitwarden.enabled'))
+    BWS_METAWAYS_BASE_PROJECT_ID: =@('bitwarden.metaways.base.project_id')
+    BWS_METAWAYS_ENV_PROJECT_ID: =@('bitwarden.metaways.' ~ input.argument('%') ~ '.project_id')
+    BWS_SERVER_URL: =@('bitwarden.server_url')
+    APPEND_MODE: "true"
+    ENV: = input.argument('%')
+  exec: |
+    #!bash(workspace:/)|@
+    if [ -z "$ENV" ]; then
+      echo "No environment specified"
+      exit 1
+    fi
+    if ! [ "$BITWARDEN_ENABLED" = yes ]; then
+      echo "Bitwarden integration is disabled, skipping secrets download"
+      exit 0
+    fi
+    echo "Downloading metaways base secrets from Bitwarden"
+    ./.my127ws/harness/scripts/bitwarden.sh download-all-secrets $BWS_SERVER_URL $BWS_METAWAYS_BASE_PROJECT_ID .env $APPEND_MODE
+    if [ "$BWS_METAWAYS_ENV_PROJECT_ID" != "" ]; then
+      echo "Downloading metaways $ENV secrets from Bitwarden"
+      ./.my127ws/harness/scripts/bitwarden.sh download-all-secrets $BWS_SERVER_URL $BWS_METAWAYS_ENV_PROJECT_ID .env $APPEND_MODE
+    else
+      echo "No environment specific Bitwarden project configured, skipping"
+    fi
+
 command('import production database %'):
   env:
     AWS_ACCESS_KEY_ID: = @('digital_ocean.id')

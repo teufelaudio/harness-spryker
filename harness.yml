@@ -224,6 +224,8 @@ attributes:
       accessMode: ReadWriteOnce
       size: 2Gi
 
+  mutagen:
+    enabled: no
 ---
 command('frontend yves watch'):
   env:

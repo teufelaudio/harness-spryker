@@ -24,9 +24,6 @@ sync:
       mode: posix-raw
     ignore:
       paths:
-        - /.docker-sync
-        - /.idea
-        - /.git
-        - /var
-        - /.deptrac.cache
-        - /.webpack-cache
+{% for path in @('mutagen.ignore_paths') %}
+        - {{ path }}
+{% endfor %}

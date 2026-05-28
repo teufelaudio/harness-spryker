@@ -1,7 +1,7 @@
 
 command('enable'):
   env:
-    USE_MUTAGEN:              = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    USE_MUTAGEN:              = boolToString(@('host.os') == 'darwin' and bool(@('mutagen.enabled')))
     APP_BUILD:                = @('app.build')
     APP_MODE:                 = @('app.mode')
     NAMESPACE:                = @('namespace')
@@ -30,7 +30,7 @@ command('refresh secrets'):
 
 command('enable console'):
   env:
-    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen.enabled')))
     APP_BUILD:            = @('app.build')
     APP_MODE:             = @('app.mode')
     NAMESPACE:            = @('namespace')
@@ -46,7 +46,7 @@ command('enable console'):
 
 command('disable'):
   env:
-    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen.enabled')))
     NAMESPACE:            = @('namespace')
     COMPOSE_BIN: = @('docker.compose.bin')
     COMPOSE_PROJECT_NAME: = @('namespace')
@@ -56,7 +56,7 @@ command('disable'):
 
 command('destroy [--all]'):
   env:
-    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen.enabled')))
     NAMESPACE:            = @('namespace')
     COMPOSE_BIN: = @('docker.compose.bin')
     COMPOSE_PROJECT_NAME: = @('namespace')
@@ -67,7 +67,7 @@ command('destroy [--all]'):
 
 command('rebuild'):
   env:
-    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen')))
+    USE_MUTAGEN:          = boolToString(@('host.os') == 'darwin' and bool(@('mutagen.enabled')))
     NAMESPACE:            = @('namespace')
     COMPOSE_BIN: = @('docker.compose.bin')
     COMPOSE_PROJECT_NAME: = @('namespace')

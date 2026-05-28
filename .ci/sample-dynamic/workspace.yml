@@ -17,3 +17,14 @@ attribute('bitwarden'):
   organization_id: org_1
   token: ~
   server_url: https://bitwarden.example.com
+
+attribute('mutagen'):
+  enabled: yes
+  ignore_paths:
+    - /.docker-sync
+    - /.idea
+    - /.git
+    - /var
+    - /.deptrac.cache
+    - /.webpack-cache
+    - /node_modules

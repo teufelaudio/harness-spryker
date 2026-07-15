@@ -114,6 +114,11 @@
       "type": "tar.gz",
       "url": "https://github.com/teufelaudio/harness-spryker/archive/1.15.0.tar.gz",
       "date": "2026-07-09"
+    },
+    "v1.15.1": {
+      "type": "tar.gz",
+      "url": "https://github.com/teufelaudio/harness-spryker/archive/refs/heads/task/MISC-update-dockerignore.tar.gz",
+      "date": "2026-07-15"
     }
   }
 }

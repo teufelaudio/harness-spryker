@@ -153,20 +153,6 @@ command('lighthouse run-and-publish [<url>] [--desktop]'):
     docker cp data/lighthouse.json "$(docker ps --all --filter 'name=console' --format '{{.Names}}'):/app/data/lighthouse.json"
     passthru $COMPOSE_BIN exec -e TARGET_URL=$TARGET_URL -e DESKTOP=$DESKTOP console vendor/bin/console lighthouse:result:publish
 
-command('run playwright'):
-  env:
-    COMPOSE_PROJECT_NAME: = @('namespace')
-  exec: |
-    #!bash(workspace:/)|@
-    docker-compose run --rm playwright /app/tools/scripts/playwright.sh
-
-command('run playwright-ci'):
-  env:
-    COMPOSE_PROJECT_NAME: = @('namespace')
-  exec: |
-    #!bash(workspace:/)|@
-    docker-compose run --rm playwright /app/tools/scripts/playwright_ci.sh
-
 command('docker login'):
   env:
     COMPOSE_PROJECT_NAME: = @('namespace')

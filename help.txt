@@ -32,6 +32,5 @@
 | ws secret encrypt '[text to encrypt]'              | Encrypt a string to be stored in the repo (make sure you enclose the secret in single quotes),       |
 |                                                    | eg "ws secret encrypt 'api-password'"                                                                |
 | ws refresh secrets                                 | Reload secrets from bitwarden to your local docker environment                                       |
-| ws run playwright                                  | Run the local/CI playwright scenarios                                                                |
 | ws help                                            | Show this help                                                                                       |
 +----------------------------------------------------+------------------------------------------------------------------------------------------------------+

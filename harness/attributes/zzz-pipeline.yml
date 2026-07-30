@@ -50,8 +50,6 @@ attributes:
             maxmemory: '1073741824'
         lighthouse:
           enabled: true
-        playwright:
-          enabled: false # For the nightly pipeline, we need to enable this via an env var
       ingress:
         annotations:
           cert-manager.io/cluster-issuer: letsencrypt-http

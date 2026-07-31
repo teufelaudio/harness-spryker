@@ -51,7 +51,8 @@ command('copy ci artifacts'):
     ws exec app ci:archive_logs      
     docker-compose exec php-fpm /usr/lib/archive_logs.sh
     docker-compose cp console:/tmp/artifacts artifacts
-    docker-compose cp php-fpm:/tmp/artifacts artifacts/web      
+    docker-compose cp php-fpm:/tmp/artifacts artifacts/web
+    docker-compose cp console:/app/.webpack-cache .webpack-cache
     tar cvzf artifacts.tar.gz artifacts
 
 command('copy coverage report'):

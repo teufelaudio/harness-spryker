@@ -2,13 +2,6 @@
 
 set -o errexit
 set -o nounset
-# pipefail is intentionally not set: it isn't supported by every /bin/sh
-# this script runs under (some BusyBox ash builds, posh, etc.), and since
-# `set` is a POSIX special builtin, an unsupported option can kill a
-# non-interactive shell immediately even when guarded with `|| true`. No
-# code path below depends on pipefail: values captured via command
-# substitution use a plain assignment (not combined with `local`) so
-# errexit still catches a failing command on its own.
 
 BWS_VERSION="2.0.0"
 

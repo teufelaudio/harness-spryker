@@ -2,7 +2,13 @@
 
 set -o errexit
 set -o nounset
-set -o pipefail
+# pipefail is intentionally not set: it isn't supported by every /bin/sh
+# this script runs under (some BusyBox ash builds, posh, etc.), and since
+# `set` is a POSIX special builtin, an unsupported option can kill a
+# non-interactive shell immediately even when guarded with `|| true`. No
+# code path below depends on pipefail: values captured via command
+# substitution use a plain assignment (not combined with `local`) so
+# errexit still catches a failing command on its own.
 
 BWS_VERSION="2.0.0"
 
@@ -194,7 +200,12 @@ download_secret_by_id() {
 
   echo "Fetching secret by ID: ${secret_id}..." >&2
 
-  bws secret get "$secret_id" --server-url "$server_url" -o env | extract_value_after_equals | remove_surrounding_quotes
+  # Captured as a plain assignment (not combined with `local`) so that
+  # bws's exit status is preserved and errexit catches a failure, without
+  # depending on pipefail support in the running shell.
+  local raw_secret
+  raw_secret="$(bws secret get "$secret_id" --server-url "$server_url" -o env)"
+  printf '%s' "$raw_secret" | extract_value_after_equals | remove_surrounding_quotes
 }
 
 download_all_secrets() {

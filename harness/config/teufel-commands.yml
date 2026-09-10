@@ -48,6 +48,7 @@ command('copy ci artifacts'):
     COMPOSE_PROJECT_NAME: = @('namespace')
   exec: |
     #!bash(workspace:/)|=
+    mkdir -p artifacts/web
     ws exec app ci:archive_logs || true     
     docker-compose exec php-fpm /usr/lib/archive_logs.sh || true
     docker-compose cp console:/tmp/artifacts artifacts || true

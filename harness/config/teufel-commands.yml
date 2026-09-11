@@ -48,10 +48,11 @@ command('copy ci artifacts'):
     COMPOSE_PROJECT_NAME: = @('namespace')
   exec: |
     #!bash(workspace:/)|=
-    ws exec app ci:archive_logs      
-    docker-compose exec php-fpm /usr/lib/archive_logs.sh
-    docker-compose cp console:/tmp/artifacts artifacts
-    docker-compose cp php-fpm:/tmp/artifacts artifacts/web      
+    ws exec app ci:archive_logs || true
+    docker-compose exec php-fpm /usr/lib/archive_logs.sh || true
+    docker-compose cp console:/tmp/artifacts artifacts || true
+    docker-compose cp php-fpm:/tmp/artifacts artifacts/web || true
+    ws logs > artifacts/docker-compose.log || true
     tar cvzf artifacts.tar.gz artifacts
 
 command('copy coverage report'):

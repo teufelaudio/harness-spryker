@@ -9,7 +9,7 @@ read_token() {
   # Check if BWS_ACCESS_TOKEN is set and not empty
   if [ -z "${BWS_ACCESS_TOKEN:-}" ]; then
     printf "Please enter Bitwarden Secrets token: " >&2
-    read -r -s BWS_ACCESS_TOKEN
+    read -r -s BWS_ACCESS_TOKEN || true
     echo >&2
 
     # Verify it's not still empty after input
@@ -161,7 +161,7 @@ download_secret() {
   local all_secrets
   all_secrets="$(fetch_all_secrets_as_env "$server_url" "$project_id")"
   local secret_line
-  secret_line=$(echo "$all_secrets" | find_secret_line_by_name "$secret_name")
+  secret_line=$(echo "$all_secrets" | find_secret_line_by_name "$secret_name") || true
 
   if [ -z "$secret_line" ]; then
     echo "Secret '${secret_name}' not found in project '${project_id}'." >&2
